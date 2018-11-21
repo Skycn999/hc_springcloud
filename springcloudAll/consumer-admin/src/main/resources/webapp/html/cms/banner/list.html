@@ -1,0 +1,150 @@
+<#import "/layout.html" as c>
+    <#import "/list_layout.html" as list>
+        <#assign alertList = []/>
+        <@c.html title="Index">
+        <!-- ================== 开始页面级CSS调用 ================== -->
+        <link href="${pluginsRoot}bootstrap-wizard/css/bwizard.min.css" rel="stylesheet"/>
+        <!-- 日历控件 -->
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/WdatePicker.css" rel="stylesheet"/>
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/default/datepicker.css" rel="stylesheet"/>
+        <!-- ================== 结束页面级CSS调用 ================== -->
+        <@list.html title="banner列表" subTitle="banner列表" alertList=alertList permi="sys:banner:add" addBtn=true searchHint="请根据banner标题进行搜索">
+
+<@shiro.hasPermission name="sys:banner:edit">
+<input type="hidden" id="editPermi" value="1"/>
+</@shiro.hasPermission>
+<@shiro.hasPermission name="sys:banner:publish">
+<input type="hidden" id="bannerPublish" value="1"/>
+</@shiro.hasPermission>
+<@shiro.hasPermission name="sys:banner:back">
+<input type="hidden" id="bannerBack" value="1"/>
+</@shiro.hasPermission>
+
+<!--开启添加模态窗口-->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"> banner新增 <!-- <a class="btn btn-info btn-xs m-l-10" role="button" data-toggle="collapse" href="#OperationTipsEdit" aria-expanded="true" title="操作提示">  <i class="fa fa-exclamation"></i> 提示 </a> --> </h4>
+            </div>
+            <div class="modal-body">
+                <!--<ul class="text-info p-b-15 p-l-15 collapse in" role="tabpanel" id="OperationTipsEdit">-->
+                <form id="addForm" class="form-horizontal form-bordered p-0" autocomplete="off" action="${adminRoot}banner/json/add" method="post" data-parsley-validate="true">
+                    <input type="hidden" value="" name="id"/>
+                    <div class="form-group">
+                        <label class="control-label col-md-2 col-sm-3">banner标题&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <div class="col-md-9 col-sm-8">
+                            <input type="text" name="title" class="form-control" placeholder="请输入banner标题" maxlength="200" autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，请输入字符且长度在1-200个字符。"  data-parsley-required="true" data-parsley-length="[1, 200]"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2 col-sm-3">APP端banner&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <div class="col-md-9 col-sm-8">
+                            <input type="hidden" id="addFormAppPath" name="appPath">
+                            <div class="clickreply-image m-b-15"><img src="${imgRoot}default_image.gif" id="addFormPicImg" alt="" class="media-object viewImage"></div>
+                            <p class="text-info">封面图片尺寸要求宽度为360像素、高度为200像素,最大为2M；支持格式gif，jpg，png，jpeg。</p>
+                            <span class="btn btn-sm btn-white fileinput-button"> <i class="fa fa-upload"></i> <span>文件上传</span>
+                                <input id="addFormPic" type="file" name="uploadFile" autocomplete="off" multiple>
+                                </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2 col-sm-3">移动端跳转地址&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;:  </label>
+                        <div class="col-md-9 col-sm-8">
+                            <input type="url" data-parsley-type="url" name="pcPath" class="form-control" placeholder="请输入跳转地址" data-tip="tooltip" data-placement="auto" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2 col-sm-3">是否发布&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;:  </label>
+                        <div class="col-md-9 col-sm-8">
+                            <input type="checkbox" class="state" autocomplete="off"
+                                   data-input-name="state"
+                                   data-size="small"
+                                   data-on-color="primary"
+                                   data-on-text="是"
+                                   data-off-text="否"
+                                   data-input-true="1"
+                                   data-input-false="0"
+                                   checked/>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer"> <a href="javascript:;" class="btn btn-white" data-dismiss="modal">取消</a> <a href="javascript:;" class="btn btn-primary" data-loading-text="Loading..." nc-ajax-submit-target="addForm" nc-ajax-submit>保存</a> </div>
+        </div>
+    </div>
+</div>
+<!--结束添加模态窗口-->
+
+<!--开启编辑模态窗口-->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"> banner修改 <!-- <a class="btn btn-info btn-xs m-l-10" role="button" data-toggle="collapse" href="#OperationTipsEdit" aria-expanded="true" title="操作提示">  <i class="fa fa-exclamation"></i> 提示 </a> --> </h4>
+            </div>
+            <div class="modal-body">
+                <!--<ul class="text-info p-b-15 p-l-15 collapse in" role="tabpanel" id="OperationTipsEdit">-->
+                <form id="editForm" class="form-horizontal form-bordered p-0" autocomplete="off" action="${adminRoot}banner/json/edit" method="post" data-parsley-validate="true">
+                    <input type="hidden" value="" name="id"/>
+                    <div class="form-group">
+                        <label class="control-label col-md-2 col-sm-3">banner标题&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <div class="col-md-9 col-sm-8">
+                            <input type="text" id="title" name="title" class="form-control" placeholder="请输入banner标题" maxlength="200" autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，请输入字符且长度在1-200个字符。"  data-parsley-required="true" data-parsley-length="[1, 200]"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2 col-sm-3">APP端banner&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <div class="col-md-9 col-sm-8">
+                            <input type="hidden" id="editFormAppPath" name="appPath">
+                            <div class="clickreply-image m-b-15"><img src="${imgRoot}default_image.gif" id="editFormPicImg" alt="" class="media-object viewImage"></div>
+                            <p class="text-info">封面图片尺寸要求宽度为360像素、高度为200像素,最大为2M；支持格式gif，jpg，png，jpeg。</p>
+                            <span class="btn btn-sm btn-white fileinput-button"> <i class="fa fa-upload"></i> <span>文件上传</span>
+                                <input id="editFormPic" type="file" name="file" autocomplete="off" multiple>
+                                </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2 col-sm-3">移动端跳转地址&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;:  </label>
+                        <div class="col-md-9 col-sm-8">
+                            <input type="url" data-parsley-type="url" name="pcPath" id="pcPath" class="form-control" placeholder="请输入跳转地址" data-tip="tooltip" data-placement="auto" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2 col-sm-3">是否发布&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;:  </label>
+                        <div class="col-md-9 col-sm-8">
+                            <input type="checkbox" class="state" autocomplete="off"
+                                   data-input-name="state"
+                                   data-size="small"
+                                   data-on-color="primary"
+                                   data-on-text="是"
+                                   data-off-text="否"
+                                   data-input-true="1"
+                                   data-input-false="0"
+                                   checked/>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer"> <a href="javascript:;" class="btn btn-white" data-dismiss="modal">取消</a> <a href="javascript:;" class="btn btn-primary" data-loading-text="Loading..." nc-ajax-submit-target="editForm" nc-ajax-submit>保存</a> </div>
+        </div>
+    </div>
+</div>
+<!--结束编辑模态窗口-->
+
+</@list.html>
+<!-- ================== 开始页面级JavaScrip调用 ================== -->
+<script src="${pluginsRoot}bootstrap-wizard/js/bwizard.js"></script>
+<!-- 图片压缩base64-->
+<script src="${pluginsRoot}fileupload/lrz.mobile.min.js"></script>
+<!-- 表单checkbox项 -->
+<script src="${pluginsRoot}bootstrap-switch/bootstrap-switch.min.js"></script>
+<!-- 日历控件 -->
+<script src="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/WdatePicker.js" defer="defer"></script>
+<script src="${jsRoot}cms/banner.handle.js"></script>
+<!-- ================== 结束页面级JavaScrip调用 ================== -->
+</@c.html>

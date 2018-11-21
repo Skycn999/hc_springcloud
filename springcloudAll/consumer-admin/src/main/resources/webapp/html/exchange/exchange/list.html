@@ -1,0 +1,184 @@
+<#import "/layout.html" as c>
+    <#import "/list_layout.html" as list>
+        <#assign alertList = []/>
+        <@c.html title="Index">
+        <!-- ================== 开始页面级CSS调用 ================== -->
+        <link href="${pluginsRoot}bootstrap-wizard/css/bwizard.min.css" rel="stylesheet"/>
+        <!-- 日历控件 -->
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/WdatePicker.css" rel="stylesheet"/>
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/default/datepicker.css" rel="stylesheet"/>
+        <!-- ================== 结束页面级CSS调用 ================== -->
+        <@list.html title="交易所管理" subTitle="交易" alertList=alertList permi="sys:exchange:save" addBtn=true searchHint="请输入交易所编号/交易所名称进行搜索">
+
+        <!-- 开始用户权限参数 -->
+        <@shiro.hasPermission name="sys:exchange:edit">
+            <input type="hidden" id="editPermi" value="1"/>
+        </@shiro.hasPermission>
+        <@shiro.hasPermission name="sys:exchange:detail">
+            <input type="hidden" id="detailPermi" value="1"/>
+        </@shiro.hasPermission>
+<!-- 结束用户权限参数 -->
+
+<!-- 开启新增模态窗口 -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"> 添加交易所</h4>
+            </div>
+            <div class="modal-body">
+                <form id="addForm" autocomplete="off" action="${adminRoot}exchange/json/add" method="post" data-parsley-validate="true">
+                    <div class="form-group">
+                        <label class="control-label">交易所名称<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <input type="text" name="name" class="form-control" placeholder="交易所名称" data-tip="tooltip" data-placement="auto" data-original-title=""  data-parsley-required="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">行情地址<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <input type="text" name="quoteUrl" class="form-control" placeholder="行情地址" data-tip="tooltip" data-placement="auto" data-original-title=""  data-parsley-required="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">交易地址<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <input type="text" name="txUrl" class="form-control" placeholder="交易地址" data-tip="tooltip" data-placement="auto" data-original-title=""  data-parsley-required="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">状态<i class="f-s-14 text-danger">*</i> &nbsp;: </label>
+                        <div>
+                            <input type="checkbox" class="stateAdd" autocomplete="off"
+                                   data-input-name="state"
+                                   data-size="small"
+                                   data-on-color="primary"
+                                   data-on-text="启用"
+                                   data-off-text="禁用"
+                                   data-input-true="1"
+                                   data-input-false="0"
+                                   checked/>
+                        </div>
+                     </div>
+                </form>
+            </div>
+            <div class="modal-footer"> <a href="javascript:;" class="btn btn-white" data-dismiss="modal">放弃操作</a> <a href="javascript:;" class="btn btn-primary" data-loading-text="Loading..." nc-ajax-submit-target="addForm" nc-ajax-submit>确认提交</a> </div>
+        </div>
+    </div>
+</div>
+<!-- 结束新增模态窗口 -->
+
+
+<!-- 开启编辑模态窗口 -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"> 编辑交易所 </h4>
+            </div>
+            <div class="modal-body">
+                <form id="editForm" autocomplete="off" action="${adminRoot}exchange/json/update" method="post" data-parsley-validate="true">
+                    <input type="hidden" value="" name="id"/>
+                    <div class="form-group">
+                        <label class="control-label">交易所名称<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <input type="text" name="name" class="form-control" placeholder="交易所名称" data-tip="tooltip" data-placement="auto" data-original-title=""  data-parsley-required="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">行情地址<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <input type="text" name="quoteUrl" class="form-control" placeholder="行情地址" data-tip="tooltip" data-placement="auto" data-original-title=""  data-parsley-required="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">交易地址<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <input type="text" name="txUrl" class="form-control" placeholder="交易地址" data-tip="tooltip" data-placement="auto" data-original-title=""  data-parsley-required="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">状态<i class="f-s-14 text-danger">*</i> &nbsp;: </label>
+                        <div>
+                            <input type="checkbox" class="statecEdit" autocomplete="off"
+                                   data-input-name="state"
+                                   data-size="small"
+                                   data-on-color="primary"
+                                   data-on-text="启用"
+                                   data-off-text="禁用"
+                                   data-input-true="1"
+                                   data-input-false="0"
+                                   checked/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer"> <a href="javascript:;" class="btn btn-white" data-dismiss="modal">放弃操作</a> <a href="javascript:;" class="btn btn-primary" data-loading-text="Loading..." nc-ajax-submit-target="editForm" nc-ajax-submit>确认提交</a> </div>
+        </div>
+    </div>
+</div>
+<!-- 结束编辑模态窗口 -->
+
+<!-- 开始查看模态窗口 -->
+<div class="modal fade" id="detailModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"> 交易所详情 </h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label class="control-label">交易所编号&nbsp;: </label>
+                        <input type="text" name="exNo" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">交易所名称&nbsp;: </label>
+                        <input type="text" name="name" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">行情地址&nbsp;: </label>
+                        <input type="text" name="quoteUrl" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">交易地址&nbsp;: </label>
+                        <input type="text" name="txUrl" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">状态&nbsp;: </label>
+                        <input type="text" name="state" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">创建时间&nbsp;: </label>
+                        <input type="text" name="createTime" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">更新时间&nbsp;: </label>
+                        <input type="text" name="updateTime" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">创建人&nbsp;: </label>
+                        <input type="text" name="creator" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">更新人&nbsp;: </label>
+                        <input type="text" name="updator" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">停用时间&nbsp;: </label>
+                        <input type="text" name="stopTime" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">启用时间&nbsp;: </label>
+                        <input type="text" name="enableTime" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 结束查看模态窗口 -->
+
+
+
+</@list.html>
+<!-- ================== 开始页面级JavaScrip调用 ================== -->
+<script src="${pluginsRoot}bootstrap-wizard/js/bwizard.js"></script>
+<!-- 表单checkbox项 -->
+<script src="${pluginsRoot}bootstrap-switch/bootstrap-switch.min.js"></script>
+<!-- 日历控件 -->
+<script src="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/WdatePicker.js" defer="defer"></script>
+<script src="${jsRoot}exchange/exchange.handle.js"></script>
+<!-- ================== 结束页面级JavaScrip调用 ================== -->
+</@c.html>

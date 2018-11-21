@@ -1,0 +1,145 @@
+<#import "/layout.html" as c>
+    <@c.html title="Index">
+
+    <style type="text/css">
+        .mytable {
+            color: #333;
+            width: 96%;
+            margin: 10px;
+        }
+
+        .mytable .lable {
+            text-align: center;
+            width: 100px;
+            height: 50px;
+            background: #eee;
+            font-size: 16px;
+        }
+
+        .mytable .tlable {
+            text-align: center;
+            width: 100px;
+            height: 40px;
+            background: #eee;
+        }
+
+        .btn {
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        .mytable td {
+            padding: 5px;
+            vertical-align: middle;
+
+        }
+
+        .mytable button {
+            float: right;
+        }
+
+        tbody {
+            padding: 1px;
+        }
+
+        .inline-block {
+            display: inline-block;
+        }
+
+        .w140 {
+            width: 140px;
+            padding: 5px 11px;
+        }
+
+        select {
+            min-width: 120px;
+            padding: 7px 11px;
+            font-size: 12px;
+            color: #666;
+            outline: none;
+        }
+    </style>
+
+    <!-- 开始页面内容 -->
+    <div id="content" class="content">
+
+        <!-- 开始面包屑导航 -->
+        <ol class="breadcrumb pull-right">
+            <li><a href="javascript:;">首页</a></li>
+            <#list menuState.breadCrumbList as breadCrumb>
+                <li class="">${breadCrumb}</li>
+            </#list>
+        </ol>
+        <!-- 结束面包屑导航 -->
+
+        <!-- 开始页头区域 -->
+        <h1 class="page-header">平台用户统计
+            <small class="m-l-10">平台用户统计</small>
+        </h1>
+        <!-- 结束页头区域 -->
+
+        <div class="row">
+            <div class="col-md-12">
+                <div data-sortable-id="form-stuff-1">
+                    <div class="clearfix">
+                        <div class="col-md-4 p-l-0" style="width: 100%;paddding:10px 0;">
+                            <div class="col-md-9 col-sm-8" style="width: 100%;height: 40px">
+                                <label>统计时间&nbsp;: </label>
+                                <input id="startTimeStr" type="text" class="form-control J-date-start inline-block w140"
+                                       nc-format="" data-parsley-required="true" format="yyyy-MM-dd HH:mm:ss"
+                                       placeholder="请选择开始时间" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'});">
+                                <input id="endTimeStr" type="text" class="form-control J-date-end  inline-block w140"
+                                       nc-format="" data-parsley-required="true" format="yyyy-MM-dd HH:mm:ss"
+                                       placeholder="请选择结束时间" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'});">
+                                <a href="javascript:;" style="padding: 6px 10px" class="btn btn-danger btn-sm m-r-10"
+                                   onclick="OperateHandle.doStat()"><i class="fa fa-calculator"></i>&nbsp;统计&nbsp;</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 平台用户统计 begin row -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-inverse" data-no-drag="true">
+                    <div class="panel-heading">
+                        <div class="panel-heading-btn"></div>
+                        <h4 class="panel-title">平台用户统计</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div style="position: relative;">
+                            <table border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse;"
+                                   class="mytable">
+                                <tbody>
+                                <tr>
+                                    <th class="tlable">时间段</th>
+                                    <th class="tlable">注册用户数量</th>
+                                    <th class="tlable">登陆用户数量</th>
+                                </tr>
+                                <tr>
+                                    <td class="lable" id="timeStr"></td>
+                                    <td class="lable" id="regNum"></td>
+                                    <td class="lable" id="loginNum"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+
+    </div>
+
+</@c.html>
+
+<!-- ================== 开始页面级JavaScrip调用 ================== -->
+<script src="${pluginsRoot}bootstrap-wizard/js/bwizard.js"></script>
+<!-- 表单checkbox项 -->
+<script src="${pluginsRoot}bootstrap-switch/bootstrap-switch.min.js"></script>
+<!-- 日历控件 -->
+<script src="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/WdatePicker.js" defer="defer"></script>
+<script src="${jsRoot}count/userForm.handle.js"></script>

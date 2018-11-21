@@ -1,0 +1,9 @@
+.WdateFmtErr{
+	color:red;
+}
+#a,#b{
+	padding:.35em .625em .75em;margin:0 2px;border:1px solid silver;
+}
+#a1,#b1{
+	padding:.5em;border:0;width:auto;font-size: 14px
+}

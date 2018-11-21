@@ -1,0 +1,40 @@
+server:
+  port: 8761
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+eureka:
+  instance:
+    hostname: 192.168.2.84
+    ip: 192.168.2.84
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      default-zone: http://admin:admin@${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    enable-self-preservation: false
+    registry-sync-retry-wait-ms: 10000
+spring:
+  application:
+    name: eureka-server
+
+security:
+  basic:
+    enabled: false
+  user:
+    name: admin
+    password: admin
+
+info:
+  app.name: pfms
+  company.name: hckj
+  build.artifactId: ${project.artifactId}
+  build.version:  ${project.version}
+
+#management:
+#  security:
+#    enabled: true
+#  context-path: /mng
+#  port: 9980
+

@@ -1,0 +1,179 @@
+<#import "/layout.html" as c>
+<#import "/list_layout.html" as list>
+<#assign alertList = []/>
+<#assign alertList = alertList + ["这里是系统中定义的所有数据字典。"]/>
+<@c.html title="Index">
+    <@list.html title="数据字典" subTitle="数据字典对应新增及编辑" alertList=alertList permi="sys:dict:save" addBtn=true searchHint="请输入标识或名称作为关键词进行搜索">
+    </@list.html>
+
+    <!-- ================== 开始页面所需CSS引入 ================== -->
+    <!-- 富文本编辑器 -->
+    <link type="text/css" rel="stylesheet" href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/WdatePicker.css" />
+    <link type="text/css" rel="stylesheet" href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/default/datepicker.css" />
+    <!-- ================== 开始页面所需CSS引入 ================== -->
+
+    <!-- 开始用户权限参数 -->
+    <#--<@shiro.hasPermission name="sys:dict:edit">-->
+    <input type="hidden" id="edit" value="1"/>
+    <#--</@shiro.hasPermission>-->
+    <#--<@shiro.hasPermission name="sys:dict:del">-->
+    <input type="hidden" id="del" value="1"/>
+    <#--</@shiro.hasPermission>-->
+    <#--<@shiro.hasPermission name="sys:dict:open">-->
+    <input type="hidden" id="open" value="1"/>
+    <#--</@shiro.hasPermission>-->
+    <#--<@shiro.hasPermission name="sys:dict:close">-->
+    <input type="hidden" id="close" value="1"/>
+    <#--</@shiro.hasPermission>-->
+    <!-- 结束用户权限参数 -->
+
+    <!-- 开始新增资金模态窗口 -->
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title"> 新增数据字典 <a class="btn btn-info btn-xs m-l-10" role="button" data-toggle="collapse" href="#OperationTipscapital1" aria-expanded="false" title="操作提示"> <i class="fa fa-exclamation"></i> &nbsp;提示 </a> </h4>
+                </div>
+                <div class="modal-body">
+                    <!-- 开始操作提示 -->
+                    <ul class="collapse in text-info m-b-20 p-l-15" role="tabpanel" id="OperationTipscapital1">
+                        <li class="m-b-10">相同标识的数据为统一类型字典数据</li>
+                    </ul>
+                    <!-- 结束操作提示 -->
+                    <!-- 开始系统资金设置模块 -->
+                    <form action="${adminRoot}/dict/json/add" id="addForm" method="post" autocomplete="off" data-parsley-validate="true">
+                        <div class="form-group">
+                            <label class="control-label"> 字典标识 <i class="f-s-14 text-danger">*</i> &nbsp;: </label>
+                            <input type="text" name="nid" class="form-control" autocomplete="off" placeholder="请输入字典标识" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="必填选项，可使用英文、数字，内容长度控制在2-30个字符。"
+                                   data-parsley-required="true"
+                                   data-parsley-length="[2, 30]">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"> 名称 <i class="f-s-14 text-danger">*</i> &nbsp;: </label>
+                            <input type="text" name="name"  class="form-control" autocomplete="off" placeholder="请输入名称" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="必填选项，可使用中文、英文、数字，内容长度控制在2-30个字符。"
+                                   data-parsley-required="true"
+                                   data-parsley-length="[2, 30]"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"> 值 <i class="f-s-14 text-danger">*</i> &nbsp;: </label>
+                            <input type="text" name="val"  class="form-control" autocomplete="off" placeholder="请输入取值" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="必填选项，可使用中文、英文、数字，内容长度控制在2-30个字符。"
+                                   data-parsley-required="true"
+                                   data-parsley-length="[1, 30]"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">排序<i class="f-s-14 text-danger">*</i>&nbsp;:</label>
+                            <input type="number" class="form-control" name="sortNo" autocomplete="off" placeholder="请输入菜单序号" value="0" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="必填选项，可使100以内正整数数。"
+                                   data-parsley-length="[1, 3]"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"> 状态<i class="f-s-14 text-danger">*</i> &nbsp;: </label>
+                            <div>
+                                <input type="checkbox" class="status" autocomplete="off"
+                                       data-input-name="status"
+                                       data-size="small"
+                                       data-on-color="primary"
+                                       data-on-text="是"
+                                       data-off-text="否"
+                                       data-input-true="1"
+                                       data-input-false="0" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label"> 描述 <i class="f-s-14 text-danger"></i>&nbsp;:</label>
+                        <textarea name="description" class="form-control" placeholder="请输入字典描述" rows="5"
+                                  data-original-title="选填选项，可使用中文、英文、数字，内容长度控制在0-200个字符。"
+                                  data-parsley-required="false" data-parsley-length="[0, 200]">
+                                      </textarea>
+                    </div>
+                    </form>
+                    <!-- 结束系统资金设置模块--> </div>
+                <div class="modal-footer"> <a href="javascript:;" class="btn btn-white" data-dismiss="modal">放弃操作</a> <a href="javascript:;" class="btn btn-primary" data-loading-text="Loading..." nc-ajax-submit-target="addForm" nc-ajax-submit>确认提交</a> </div>
+            </div>
+        </div>
+    </div>
+    <!-- 结束新增资金模态窗口 -->
+
+    <!-- 开始编辑站内信资金模态窗口 -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title"> 编辑数据字典 <a class="btn btn-info btn-xs m-l-10" role="button" data-toggle="collapse" href="#OperationTipscapital2" aria-expanded="false" title="操作提示"> <i class="fa fa-exclamation"></i> &nbsp;提示 </a> </h4>
+                </div>
+                <div class="modal-body">
+                    <!-- 开始操作提示 -->
+                    <ul class="collapse in text-info m-b-20 p-l-15" role="tabpanel" id="OperationTipscapital2">
+                        <li class="m-b-10">相同标识的数据为统一类型字典数据</li>
+                    </ul>
+                    <!-- 结束操作提示 -->
+                    <!-- 开始系统资金设置模块 -->
+                    <form action="${adminRoot}/dict/json/edit" id="editForm" method="post" autocomplete="off" data-parsley-validate="true">
+                        <input type="hidden" name="id">
+                        <div class="form-group">
+                            <label class="control-label"> 字典标识 <i class="f-s-14 text-danger">*</i> &nbsp;: </label>
+                            <input type="text" name="nid" class="form-control" autocomplete="off" placeholder="请输入字典标识" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="必填选项，可使用英文、数字，内容长度控制在2-30个字符。"
+                                   data-parsley-required="true"
+                                   data-parsley-length="[2, 30]">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"> 名称 <i class="f-s-14 text-danger">*</i> &nbsp;: </label>
+                            <input type="text" name="name"  class="form-control" autocomplete="off" placeholder="请输入名称" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="必填选项，可使用中文、英文、数字，内容长度控制在2-30个字符。"
+                                   data-parsley-required="true"
+                                   data-parsley-length="[2, 30]"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"> 值 <i class="f-s-14 text-danger">*</i> &nbsp;: </label>
+                            <input type="text" name="val"  class="form-control" autocomplete="off" placeholder="请输入取值" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="必填选项，可使用中文、英文、数字，内容长度控制在2-30个字符。"
+                                   data-parsley-required="true"
+                                   data-parsley-length="[1, 30]"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">排序<i class="f-s-14 text-danger">*</i>&nbsp;:</label>
+                            <input type="number" class="form-control" name="sortNo" autocomplete="off" placeholder="请输入菜单序号" value="0" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="必填选项，可使100以内正整数数。"
+                                   data-parsley-length="[1, 3]"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"> 状态<i class="f-s-14 text-danger">*</i> &nbsp;: </label>
+                            <div>
+                                <input type="checkbox" class="status" autocomplete="off"
+                                       data-input-name="status"
+                                       data-size="small"
+                                       data-on-color="primary"
+                                       data-on-text="是"
+                                       data-off-text="否"
+                                       data-input-true="1"
+                                       data-input-false="0" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"> 描述 <i class="f-s-14 text-danger"></i>&nbsp;:</label>
+                            <textarea name="description" class="form-control" placeholder="请输入字典描述" rows="5"
+                                      data-original-title="选填选项，可使用中文、英文、数字，内容长度控制在0-200个字符。"
+                                      data-parsley-required="false"
+                                      data-parsley-length="[0, 200]">
+                                      </textarea>
+                        </div>
+                    </form>
+                    <!-- 结束系统资金设置模块--> </div>
+                <div class="modal-footer"> <a href="javascript:;" class="btn btn-white" data-dismiss="modal">放弃操作</a> <a href="javascript:;" class="btn btn-primary" data-loading-text="Loading..." nc-ajax-submit-target="editForm" nc-ajax-submit>确认提交</a> </div>
+            </div>
+        </div>
+    </div>
+    <!-- 结束编辑站内信资金模态窗口 -->
+
+    <!-- ================== 开始页面级JavaScrip调用 ================== -->
+    <script src="${pluginsRoot}ueditor/lang/zh-cn/zh-cn.js"></script>
+    <script src="${pluginsRoot}bootstrap-switch/bootstrap-switch.min.js"></script>
+    <script src="${jsRoot}setting/dict.handle.js"></script>
+    <!-- ================== 结束页面级JavaScrip调用 ================== -->
+</@c.html>

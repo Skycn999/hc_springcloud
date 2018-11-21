@@ -1,0 +1,42 @@
+server:
+  port: 8751
+  allow:
+    origin: adsf
+eureka:
+  client:
+    service-url:
+#      defaultZone: http://admin:admin@116.62.127.60:8761/eureka/
+      defaultZone: http://admin:admin@13.211.205.147:8761/eureka/
+spring:
+  application:
+    name: provider-logs
+  rabbitmq:
+      host: 13.211.205.147
+      port: 5672
+      username: admin
+      password: digiccy@123
+  cloud:
+    stream:
+      bindings:
+        output:
+          destination: greeting
+          producer:
+            partitionKeyExpression: payload
+            partitionCount: 2
+  redis:
+    database: 2
+    host: 127.0.0.1
+    port: 6379
+    password: root
+    timeout: 20000
+#    cluster: #配置其他的redis服务
+#      nodes: 127.0.0.1:6389,127.0.0.1:6399
+#      max-redirects: 6
+    pool:
+      max-active: 8
+      min-idle: 0
+      max-idle: 8
+      max-wait: -1
+
+allow:
+  origin: sssssaaaaa

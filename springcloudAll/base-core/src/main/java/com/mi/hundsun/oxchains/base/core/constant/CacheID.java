@@ -1,0 +1,111 @@
+package com.mi.hundsun.oxchains.base.core.constant;
+
+/**
+ * 系统缓存目录配置常量
+ *
+ * @author liweidong
+ * @date 2017年03月10日 13:43
+ */
+public interface CacheID {
+
+
+    /**
+     * 支付结果缓存目录前缀
+     */
+    String PAY_RESULT = "PAY_RESULT:";
+    /**
+     * 参数配置缓存目录前缀
+     */
+    String CONFIG_PREFIX = "CONFIG:";
+    /**
+     * 消息模板缓存目录前缀
+     */
+    String TEMPLATE_MESSAGE_PREFIX = "TEMPLATE:MESSAGE:";
+    /**
+     * 系统消息队列缓存目录
+     */
+    String QUEUE_MESSAGE = "QUEUE:MESSAGE";
+    /**
+     * 委托回报处理队列缓存目录
+     */
+    String QUEUE_ENTRUST_PUSH = "QUEUE:ENTRUST_PUSH";
+    /**
+     * 成交回报处理队列缓存目录
+     */
+    String QUEUE_DEAL_PUSH = "QUEUE:DEAL_PUSH";
+
+    /**
+     * 图文验证码key前缀
+     */
+    String GRAPHIC_CODE_PREFIX = "GRAPHIC_CODE:";
+    /**
+     * 找回密码验证码授权key前缀
+     */
+    String BACK_PWD_KEY_PREFIX = "BACK_PWD_AUTH_KEY:";
+    /**
+     * 登录校验认证key前缀
+     */
+    String LOGIN_KEY_PREFIX = "LOGIN_KEY:";
+    /**
+     * 修改登录密码验证码授权key前缀
+     */
+    String MODIFY_LOGIN_PWD_KEY_PREFIX = "MODIFY_LOGIN_PWD_AUTH_KEY:";
+    /**
+     * 绑定谷歌验证器验证码授权key前缀
+     */
+    String BIND_GOOGLE_KEY_AUTH_KEY = "BIND_GOOGLE_KEY_AUTH_KEY:";
+
+    /**
+     * 修改谷歌验证器验证码授权key前缀
+     */
+    String MODIFY_GOOGLE_KEY_AUTH_KEY = "MODIFY_GOOGLE_KEY_AUTH_KEY:";
+
+    /**
+     * 关闭、开启谷歌验证器验证码授权key前缀
+     */
+    String CLOSE_OR_OPEN_GOOGLE_KEY_AUTH_KEY = "CLOSE_OR_OPEN_GOOGLE_KEY_AUTH_KEY:";
+
+    /**
+     *  邮件/短信验证码前缀
+     */
+    String BACK_MOBILE_VERIFY_CODE_PREFIX = "BACK:MOBILE:VERIFY_CODE:";
+    String BACK_EMAIL_VERIFY_CODE_PREFIX = "BACK:EMAIL:VERIFY_CODE:";
+    String REGIST_MOBILE_VERIFY_CODE_PREFIX = "REGIST:MOBILE:VERIFY_CODE:";
+    String REGIST_EMAIL_VERIFY_CODE_PREFIX = "REGIST:EMAIL:VERIFY_CODE:";
+    String BIND_MOBILE_VERIFY_CODE_PREFIX = "BIND:MOBILE:VERIFY_CODE:";
+    String BIND_EMAIL_VERIFY_CODE_PREFIX = "BIND:EMAIL:VERIFY_CODE:";
+    String MODIFY_PWD_MOBILE_VERIFY_CODE_PREFIX = "MODIFY_PWD:MOBILE:VERIFY_CODE:";
+    String MODIFY_PWD_EMAIL_VERIFY_CODE_PREFIX = "MODIFY_PWD:EMAIL:VERIFY_CODE:";
+    String BACK_MENTION_PWD_MOBILE_VERIFY_CODE_PREFIX = "BACK_MENTION_PWD:MOBILE:VERIFY_CODE:";
+    String BACK_MENTION_PWD_EMAIL_VERIFY_CODE_PREFIX = "BACK_MENTION_PWD:EMAIL:VERIFY_CODE:";
+    String BIND_GOOGLE_KEY_MOBILE_VERIFY_CODE_PREFIX = "BIND_GOOGLE_KEY:MOBILE:VERIFY_CODE:";
+    String BIND_GOOGLE_KEY_EMAIL_VERIFY_CODE_PREFIX = "BIND_GOOGLE_KEY:EMAIL:VERIFY_CODE:";
+    String MODIFY_GOOGLE_KEY_MOBILE_VERIFY_CODE_PREFIX = "MODIFY_GOOGLE_KEY:MOBILE:VERIFY_CODE:";
+    String MODIFY_GOOGLE_KEY_EMAIL_VERIFY_CODE_PREFIX = "MODIFY_GOOGLE_KEY:EMAIL:VERIFY_CODE:";
+    String CLOSE_OR_OPEN_GOOGLE_AUTH_MOBILE_VERIFY_CODE_PREFIX = "CLOSE_OR_OPEN_GOOGLE_AUTH:MOBILE:VERIFY_CODE:";
+    String CLOSE_OR_OPEN_GOOGLE_AUTH_EMAIL_VERIFY_CODE_PREFIX = "CLOSE_OR_OPEN_GOOGLE_AUTH:EMAIL:VERIFY_CODE:";
+    String MENTION_COIN_MOBILE_VERIFY_CODE_PREFIX = "MENTION_COIN:MOBILE:VERIFY_CODE:";
+    String MENTION_COIN_EMAIL_VERIFY_CODE_PREFIX = "MENTION_COIN:EMAIL:VERIFY_CODE:";
+
+    //委托中主订单缓存前缀
+    String CACHE_CURR_MAIN_DELEGATES = "DELEGATES:CURR:MAIN:";
+    //委托中子订单缓存前缀
+    String CACHE_CURR_SUB_DELEGATES = "DELEGATES:CURR:SUB:";
+
+    /**
+     * 最优母账号缓存前缀
+     */
+    String PREFIX_ACCOUNT = "MOTHER_ACCOUNT:";
+
+    String EXCHANGE = "EXCHANGE:";
+
+
+    //手续费模板（默认）
+    String BTC_SERVICE_FEE_TPL = "BTC_SERVICE_FEE_TPL";
+    String ETH_SERVICE_FEE_TPL = "ETH_SERVICE_FEE_TPL";
+    //净值风控模板（默认）
+    String NET_WORTH_CONTROL_TPL = "NET_WORTH_CONTROL_TPL";
+
+    //绑定谷歌验证器-googleKey
+    String BIND_GOOGLE_KEY = "BIND_GOOGLE_KEY:";
+}

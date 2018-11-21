@@ -1,0 +1,44 @@
+<#import "../../layout.html" as c>
+    <#import "../../list_layout.html" as list>
+        <#assign alertList = []/>
+        <#assign alertList = alertList + ["产品列表默认显示全部产品，可通过快速查询来搜索产品。"]/>
+        <#assign alertList = alertList + ["可以在操作列进行产品编辑等操作。"]/>
+        <@c.html title="Index">
+        <@list.html title="操作日志" subTitle="操作日志" alertList=alertList permi="sys:product:save" addBtn=false searchHint="请输入ip/uri进行搜索">
+    </@list.html>
+    <!-- ================== 开始页面所需CSS引入 ================== -->
+    <!-- 富文本编辑器 -->
+    <link type="text/css" rel="stylesheet" href="${pluginsRoot}ueditor/themes/default/css/ueditor.css">
+    <link type="text/css" rel="stylesheet" href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/WdatePicker.css" />
+    <link type="text/css" rel="stylesheet" href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/default/datepicker.css" />
+    <!-- ================== 开始页面所需CSS引入 ================== -->
+
+    <!--<@shiro.hasPermission name="sys:product:edit">
+    <input type="hidden" id="productEdit" value="1"/>
+    </@shiro.hasPermission>
+    <@shiro.hasPermission name="sys:product:publish">
+    <input type="hidden" id="productPublish" value="1"/>
+    </@shiro.hasPermission>
+    <@shiro.hasPermission name="sys:news:againPub">
+    <input type="hidden" id="againPub" value="1"/>
+    </@shiro.hasPermission>
+    <@shiro.hasPermission name="sys:product:del">
+    <input type="hidden" id="productDel" value="1"/>
+    </@shiro.hasPermission>
+    <@shiro.hasPermission name="sys:product:view">
+    <input type="hidden" id="productView" value="1"/>
+    </@shiro.hasPermission>-->
+
+    <!-- ================== 开始页面级JavaScrip调用 ================== -->
+    <!-- 表单checkbox项 -->
+    <script src="${pluginsRoot}bootstrap-switch/bootstrap-switch.min.js"></script>
+    <!-- 富文本编辑器 -->
+    <script src="${pluginsRoot}ueditor/ueditor.config.js"></script>
+    <script src="${pluginsRoot}ueditor/ueditor.all.js"></script>
+    <script src="${pluginsRoot}ueditor/lang/zh-cn/zh-cn.js"></script>
+    <!-- 时间控件 -->
+    <script src="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/WdatePicker.js" defer="defer"></script>
+
+    <script src="${jsRoot}log/log.handle.js"></script>
+    <!-- ================== 结束页面级JavaScrip调用 ================== -->
+</@c.html>

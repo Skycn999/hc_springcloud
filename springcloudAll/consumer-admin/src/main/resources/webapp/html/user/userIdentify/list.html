@@ -1,0 +1,121 @@
+<#import "/layout.html" as c>
+    <#import "/list_layout.html" as list>
+        <#assign alertList = []/>
+        <@c.html title="Index">
+        <!-- ================== 开始页面级CSS调用 ================== -->
+        <link href="${pluginsRoot}bootstrap-wizard/css/bwizard.min.css" rel="stylesheet"/>
+        <!-- 日历控件 -->
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/WdatePicker.css" rel="stylesheet"/>
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/default/datepicker.css" rel="stylesheet"/>
+        <!-- ================== 结束页面级CSS调用 ================== -->
+        <@list.html title="用户认证列表" subTitle="用户认证列表" alertList=alertList permi="sys:freeze:save" addBtn=false searchHint="请输入姓名/手机号码进行搜索">
+
+        <@shiro.hasPermission name="sys:user:identify:check">
+        <input type="hidden" id="checkPermi" value="1"/>
+        </@shiro.hasPermission>
+
+    <!-- 开启实名审核模态窗口 -->
+    <div class="modal fade" id="checkModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title"> 实名审核页面 <a class="btn btn-info btn-xs m-l-10" role="button" data-toggle="collapse" href="#OperationTipsEdit" aria-expanded="true" title="操作提示"> <i class="fa fa-exclamation"></i> 提示 </a> </h4>
+                </div>
+                <div class="modal-body">
+                    <ul class="text-info p-b-15 p-l-15 collapse in" role="tabpanel" id="OperationTipsEdit">
+                         <li>请认真核对用户信息，然后做出正确的审批</li>
+                    </ul>
+                    <form id="checkForm" class="form-horizontal form-bordered p-0" autocomplete="off" action="${adminRoot}user/identify/json/check" method="post" data-parsley-validate="true">
+                        <input type="hidden" value="" name="id"/>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">真实姓名&nbsp;:</label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="realname" class="form-control"  autocomplete="off" data-tip="tooltip" data-placement="auto" readonly/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">证件号码&nbsp;:</label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="idNo" class="form-control"  autocomplete="off" data-tip="tooltip" data-placement="auto" readonly/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">证件类型&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="idType" id="idType" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                            </div>
+                        </div>
+                        <!--<div class="form-group">-->
+                            <!--<label class="control-label col-md-2 col-sm-3">证件类型&nbsp;: </label>-->
+                            <!--<div class="col-md-9 col-sm-8">-->
+                            <!--<select name="idType" id="idTypeEdit" class="form-control" data-parsley-required="true">-->
+                                <!--<option value ="1" selected="true">大陆身份证</option>-->
+                                <!--<option value ="2">护照</option>-->
+                            <!--</select>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">证件正面图&nbsp;:</label>
+                            <div class="col-md-9 col-sm-8">
+                                <div class="clickreply-image m-b-15"><img src="${imgRoot}default_image.gif" id="lookFormPicImg1" alt=""  name="idPositivePic" class="media-object viewImage" readonly></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">证件反面图&nbsp;:</label>
+                            <div class="col-md-9 col-sm-8">
+                                <div class="clickreply-image m-b-15"><img src="${imgRoot}default_image.gif" id="lookFormPicImg2" alt=""  name="idNegativePic" class="media-object viewImage" readonly></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">审核状态&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="checkbox" class="realnameState" autocomplete="off"
+                                       data-input-name="realnameState"
+                                       data-size="small"
+                                       data-on-color="primary"
+                                       data-on-text="通过"
+                                       data-off-text="不通过"
+                                       data-input-true="2"
+                                       data-input-false="3"
+                                       checked/>
+                            </div>
+                        </div>
+
+                        <!--<div class="form-group">-->
+                        <!--<label class="control-label col-md-2 col-sm-3">审核状态&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;:</label>-->
+                        <!--<div class="col-md-9 col-sm-8">-->
+                        <!--<select name="realnameState" id="realnameStateEdit" class="form-control" data-parsley-required="true">-->
+                        <!--<option value ="2" selected="true">已认证</option>-->
+                        <!--<option value ="3">认证不通过</option>-->
+                        <!--</select>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">审核备注&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <textarea id="remark" name="remark" class="form-control" rows="5" placeholder="请输入审核备注信息..." autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，输入内容小于500个字。"  maxlength="500" data-parsley-required="true"></textarea>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer"> <a href="javascript:;" class="btn btn-white" data-dismiss="modal">取消</a> <a href="javascript:;" class="btn btn-primary" data-loading-text="Loading..." nc-ajax-submit-target="checkForm" nc-ajax-submit>保存</a> </div>
+            </div>
+        </div>
+    </div>
+    <!-- 结束实名审核模态窗口 -->
+
+
+</@list.html>
+<!-- ================== 开始页面级JavaScrip调用 ================== -->
+<script src="${pluginsRoot}bootstrap-wizard/js/bwizard.js"></script>
+<!-- 表单checkbox项 -->
+<script src="${pluginsRoot}bootstrap-switch/bootstrap-switch.min.js"></script>
+<!-- 日历控件 -->
+<script src="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/WdatePicker.js" defer="defer"></script>
+<script src="${jsRoot}user/userIdentify.handle.js"></script>
+<!-- ================== 结束页面级JavaScrip调用 ================== -->
+</@c.html>
+

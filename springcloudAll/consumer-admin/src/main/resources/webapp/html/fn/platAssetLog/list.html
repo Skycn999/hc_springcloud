@@ -1,0 +1,103 @@
+<#import "/layout.html" as c>
+    <#import "/list_layout.html" as list>
+        <#assign alertList = []/>
+        <@c.html title="Index">
+        <!-- ================== 开始页面级CSS调用 ================== -->
+        <link href="${pluginsRoot}bootstrap-wizard/css/bwizard.min.css" rel="stylesheet"/>
+        <!-- 日历控件 -->
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/WdatePicker.css" rel="stylesheet"/>
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/default/datepicker.css" rel="stylesheet"/>
+        <!-- ================== 结束页面级CSS调用 ================== -->
+        <@list.html title="资产划拨记录列表" subTitle="资产划拨记录" alertList=alertList permi="sys:platAssetLog:add" addBtn=true searchHint="请输入流水号/币种进行搜索">
+
+        <!-- 开始用户权限参数 -->
+        <@shiro.hasPermission name="sys:platAssetLog:del">
+            <input type="hidden" id="delPermi" value="1"/>
+        </@shiro.hasPermission>
+<!-- 结束用户权限参数 -->
+
+<!-- 开启新增模态窗口 -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"> 添加转币记录 </h4>
+            </div>
+            <div class="modal-body">
+                <form id="addForm" autocomplete="off" action="${adminRoot}platAssetLog/json/add" method="post" data-parsley-validate="true">
+                    <div class="form-group">
+                        <label class="control-label">流水号<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <input type="text" name="billNo" class="form-control" placeholder="流水号" data-tip="tooltip" data-placement="auto" data-original-title=""  data-parsley-required="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">转账币种<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <select name="coinCurrency" id="coinCurrencyAdd" class="form-control" data-parsley-required="true">
+                            <option value ="">-请选择币种-</option>
+                            <option value ="BTC">BTC</option>
+                            <option value ="ETH">ETH</option>
+                            <option value ="USDT">USDT</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">转账方向<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <select name="direction" id="directionAdd" class="form-control" data-parsley-required="true">
+                            <option value ="">-请选择方向-</option>
+                            <option value ="2">母账号到平台</option>
+                            <option value ="1">平台到母账号</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">交易所<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <select name="exchange" id="exchangeAdd" class="form-control" data-parsley-required="true" onchange="OperateHandle.changeData()">
+                            <option value ="">-请选择交易所-</option>
+                            <#if exchanges??>
+                                <#list exchanges as exchange>
+                                    <option value ="${exchange.name!}" excid="${exchange.id!}" >${exchange.name!}</option>
+                                </#list>
+                            </#if>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">交易所母账号<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <select name="motherAccount" id="motherAccountAdd" class="form-control" data-parsley-required="true">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">平台地址<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <select name="platAddr" id="platAddrAdd" class="form-control" data-parsley-required="true" onchange="OperateHandle.changeData()">
+                            <option value ="">-请选择平台地址-</option>
+                            <#if platUserAddress??>
+                                <#list platUserAddress as platUserAddres>
+                                    <option value ="${platUserAddres.address}">${platUserAddres.address}</option>
+                                </#list>
+                            </#if>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">划拨数量<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <input type="text" name="amount" class="form-control" placeholder="请输入划拨数量" data-tip="tooltip" data-placement="auto" maxlength="21" data-original-title="必填项，只能输入数字。" data-parsley-required="true" data-parsley-length="[1,21]" onkeyup= "if(/[^\d.]/g.test(this.value)){this.value='';}"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">转账时间<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <input id = "turnCoinTimeStr" type="text" name="turnCoinTimeStr" class="form-control J-date-start inline-block w140" nc-format=""   data-parsley-required="true" format="yyyy-MM-dd HH:mm:ss"
+                        placeholder="请选择转账时间"  onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'});">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer"> <a href="javascript:;" class="btn btn-white" data-dismiss="modal">放弃操作</a> <a href="javascript:;" class="btn btn-primary" data-loading-text="Loading..." nc-ajax-submit-target="addForm" nc-ajax-submit>确认提交</a> </div>
+        </div>
+    </div>
+</div>
+<!-- 结束新增模态窗口 -->
+
+</@list.html>
+<!-- ================== 开始页面级JavaScrip调用 ================== -->
+<script src="${pluginsRoot}bootstrap-wizard/js/bwizard.js"></script>
+<!-- 表单checkbox项 -->
+<script src="${pluginsRoot}bootstrap-switch/bootstrap-switch.min.js"></script>
+<!-- 日历控件 -->
+<script src="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/WdatePicker.js" defer="defer"></script>
+<script src="${jsRoot}fn/platAssetLog.handle.js"></script>
+<!-- ================== 结束页面级JavaScrip调用 ================== -->
+</@c.html>

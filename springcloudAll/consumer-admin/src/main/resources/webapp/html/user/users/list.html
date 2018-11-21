@@ -1,0 +1,267 @@
+<#import "/layout.html" as c>
+<#import "/list_layout.html" as list>
+<#assign alertList = []/>
+<@c.html title="Index">
+        <!-- ================== 开始页面级CSS调用 ================== -->
+        <link href="${pluginsRoot}bootstrap-wizard/css/bwizard.min.css" rel="stylesheet"/>
+        <!-- 日历控件 -->
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/WdatePicker.css" rel="stylesheet"/>
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/default/datepicker.css" rel="stylesheet"/>
+        <!-- ================== 结束页面级CSS调用 ================== -->
+    <@list.html title="用户列表" subTitle="用户列表" alertList=alertList permi="xxxxx" addBtn=false searchHint="请输入姓名/手机号码进行搜索">
+
+
+        <@shiro.hasPermission name="sys:users:detail">
+        <input type="hidden" id="detailPermi" value="1"/>
+        </@shiro.hasPermission>
+        <@shiro.hasPermission name="sys:users:edit">
+        <input type="hidden" id="editPermi" value="1"/>
+        </@shiro.hasPermission>
+        <@shiro.hasPermission name="sys:users:state">
+        <input type="hidden" id="usersStatePermi" value="1"/>
+        </@shiro.hasPermission>
+
+    <!--开启编辑模态窗口-->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"> 修改用户信息
+                    <!-- <a class="btn btn-info btn-xs m-l-10" role="button" data-toggle="collapse" href="#OperationTipsEdit" aria-expanded="true" title="操作提示">  <i class="fa fa-exclamation"></i> 提示 </a> --> </h4>
+            </div>
+            <div class="modal-body">
+                <!--<ul class="text-info p-b-15 p-l-15 collapse in" role="tabpanel" id="OperationTipsEdit">-->
+                <form id="editForm" class="form-horizontal form-bordered p-0" autocomplete="off"
+                      action="${adminRoot}users/json/edit" method="post" data-parsley-validate="true">
+                    <input type="hidden" value="" name="id"/>
+                    <div class="form-group">
+                        <label class="control-label col-md-2 col-sm-3">手机号码&nbsp;:</label>
+                        <div class="col-md-9 col-sm-8">
+                            <input type="text" name="mobile" class="form-control" placeholder="请输入手机号码" maxlength="11"
+                                   autocomplete="off" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="只能填写数字且输入内容等于11个字符。"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2 col-sm-3">真实姓名&nbsp;:</label>
+                        <div class="col-md-9 col-sm-8">
+                            <input type="text" name="realname" class="form-control" placeholder="请输入真实姓名" maxlength="30"
+                                   autocomplete="off" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="输入内容控制在1-30个字符。"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2 col-sm-3">证件类型&nbsp;: </label>
+                        <div class="col-md-9 col-sm-8" id="idTypeSwitch">
+                            <input type="checkbox" class="idType" autocomplete="off"
+                                   data-input-name="idType"
+                                   data-size="small"
+                                   data-on-color="primary"
+                                   data-on-text="身份证"
+                                   data-off-text="护照"
+                                   data-input-true="1"
+                                   data-input-false="2"
+                                   checked/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2 col-sm-3">证件号码&nbsp;:</label>
+                        <div class="col-md-9 col-sm-8">
+                            <input type="text" name="idNo" class="form-control" placeholder="请输入证件号码" maxlength="20"
+                                   autocomplete="off" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="只能填写数字或字符且输入内容控制在15~20个字符。"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2 col-sm-3">邮箱&nbsp;:</label>
+                        <div class="col-md-9 col-sm-8">
+                            <input type="text" name="email" class="form-control" placeholder="请输入邮箱" maxlength="20"
+                                   autocomplete="off" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="输入内容控制在10-20个字符。"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2 col-sm-3">Google安全标识&nbsp;: </label>
+                        <div class="col-md-9 col-sm-8">
+                            <input type="text" id="googleKey" class="form-control" placeholder="" data-tip="tooltip"
+                                   data-placement="auto" readonly="true"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2 col-sm-3">用户状态&nbsp;:</label>
+                        <div class="col-md-9 col-sm-8">
+                            <input type="text" id="state" class="form-control" placeholder="" data-tip="tooltip"
+                                   data-placement="auto" readonly="true"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2 col-sm-3">境内/境外&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;:
+                        </label>
+                        <div class="col-md-9 col-sm-8" id="countrySwitch">
+                            <input type="checkbox" class="editCountry" autocomplete="off"
+                                   data-input-name="country"
+                                   data-size="small"
+                                   data-on-color="primary"
+                                   data-on-text="境内"
+                                   data-off-text="境外"
+                                   data-input-true="1"
+                                   data-input-false="2"
+                                   checked/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer"><a href="javascript:;" class="btn btn-white" data-dismiss="modal">取消</a> <a
+                    href="javascript:;" class="btn btn-primary" data-loading-text="Loading..."
+                    nc-ajax-submit-target="editForm" nc-ajax-submit>保存</a></div>
+        </div>
+    </div>
+</div>
+    <!--结束编辑模态窗口-->
+
+<!-- 开始查看模态窗口 -->
+<div class="modal fade" id="detailModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"> 用户详情 </h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal form-bordered p-0" autocomplete="off" data-parsley-validate="true">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label class="control-label col-md-4">手机号码&nbsp;: </label>
+                            <div class="col-md-8">
+                                <input type="text" name="mobile" class="form-control" placeholder="" data-tip="tooltip"
+                                       data-placement="auto" readonly="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="control-label col-md-4">真实姓名&nbsp;: </label>
+                            <div class="col-md-8">
+                                <input type="text" name="realname" class="form-control" placeholder=""
+                                       data-tip="tooltip" data-placement="auto" readonly="true"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label class="control-label col-md-4 ">证件类型&nbsp;: </label>
+                            <div class="col-md-8">
+                                <input type="text" name="idType" class="form-control" placeholder="" data-tip="tooltip"
+                                       data-placement="auto" readonly="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="control-label col-md-4 ">证件号码&nbsp;: </label>
+                            <div class="col-md-8">
+                                <input type="text" name="idNo" class="form-control" placeholder="" data-tip="tooltip"
+                                       data-placement="auto" readonly="true"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label class="control-label col-md-4">邮箱&nbsp;: </label>
+                            <div class="col-md-8">
+                                <input type="text" name="email" class="form-control" placeholder="" data-tip="tooltip"
+                                       data-placement="auto" readonly="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="control-label col-md-4">Google安全秘钥&nbsp;: </label>
+                            <div class="col-md-8">
+                                <input type="text" name="googleKey" class="form-control" placeholder="" data-tip="tooltip"
+                                       data-placement="auto" readonly="true"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label class="control-label col-md-4">国家/地区&nbsp;: </label>
+                            <div class="col-md-8">
+                                <input type="text" name="country" class="form-control" placeholder="" data-tip="tooltip"
+                                       data-placement="auto" readonly="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="control-label col-md-4">注册时间&nbsp;: </label>
+                            <div class="col-md-8">
+                                <input type="text" name="createTime" class="form-control" placeholder="" data-tip="tooltip"
+                                       data-placement="auto" readonly="true"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label class="control-label col-md-4">用户状态&nbsp;: </label>
+                            <div class="col-md-8">
+                                <input type="text" name="state" class="form-control" placeholder="" data-tip="tooltip"
+                                       data-placement="auto" readonly="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="control-label col-md-4">连续登录失败次数&nbsp;: </label>
+                            <div class="col-md-8">
+                                <input type="text" name="errCount" class="form-control" placeholder="" data-tip="tooltip"
+                                       data-placement="auto" readonly="true"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label class="control-label col-md-4">证件图片:</label>
+                            <div class="col-md-8">
+                                <div class="clickreply-image m-b-15"><img src="${imgRoot}default_image.gif"
+                                                                          id="lookFormPicImg" alt="" name="idPositivePic"
+                                                                          class="media-object viewImage"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="control-label col-md-4">最近登录时间&nbsp;: </label>
+                            <div class="col-md-8">
+                                <input type="text" name="lastLoginDate" class="form-control" placeholder=""
+                                       data-tip="tooltip" data-placement="auto" readonly="true"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 结束查看模态窗口 -->
+
+<!--开始选择模态窗口 -->
+<div class="modal fade" id="userModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">用户列表<a class="btn btn-info btn-xs m-l-10" role="button" data-toggle="collapse"
+                                               href="<#--#OperationTips-->" aria-expanded="false" title="操作提示"><i
+                        class="fa fa-exclamation"></i>&nbsp;提示</a></h4>
+            </div>
+            <div class="modal-body">
+                <div id="dtGridContainerUser" class="dt-grid-container"></div>
+                <div id="dtGridToolBarContainerUser" class="dt-grid-toolbar-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--结束选择模态窗口-->
+
+
+    </@list.html>
+    <!-- ================== 开始页面级JavaScrip调用 ================== -->
+    <script src="${pluginsRoot}bootstrap-wizard/js/bwizard.js"></script>
+    <!-- 表单checkbox项 -->
+    <script src="${pluginsRoot}bootstrap-switch/bootstrap-switch.min.js"></script>
+    <!-- 日历控件 -->
+    <script src="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/WdatePicker.js" defer="defer"></script>
+    <script src="${jsRoot}user/users.handle.js"></script>
+    <!-- ================== 结束页面级JavaScrip调用 ================== -->
+</@c.html>

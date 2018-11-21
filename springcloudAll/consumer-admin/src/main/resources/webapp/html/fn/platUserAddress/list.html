@@ -1,0 +1,124 @@
+<#import "/layout.html" as c>
+<@c.html title="Index">
+
+
+<!-- 开始页面内容 -->
+<div id="content" class="content">
+    <!-- 开始面包屑导航 -->
+    <ol class="breadcrumb pull-right">
+        <li><a href="javascript:;">首页</a></li>
+        <#list menuState.breadCrumbList as breadCrumb>
+            <li class="">${breadCrumb}</li>
+        </#list>
+    </ol>
+    <!-- 结束面包屑导航 -->
+    <!-- 开始页头区域 -->
+    <h1 class="page-header">平台地址管理列表<small class="m-l-10">平台地址管理</small></h1>
+    <!-- 结束页头区域 -->
+    <!-- 开始布局行 -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <div class="panel-heading-btn"><a href="#listTip" class="btn btn-xs btn-icon btn-circle btn-info" role="button" data-toggle="collapse" aria-expanded="true" title="操作提示"><i class="fa fa-lightbulb-o"></i></a><a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"> <i class="fa fa-expand"></i></a><a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a></div>
+                    <h4 class="panel-title">平台地址管理列表</h4>
+                </div>
+                <div class="panel-body">
+
+                    <!-- 开始列表相关操作 -->
+                    <div class="clearfix">
+                        <div class="col-md-3 p-l-0">
+                            <a href="#importModel"  class="btn btn-success pull-left" data-toggle="modal"> <i class="fa fa-upload fa-plus m-r-10"></i> 批量导入 </a>
+                            <a href="${publicRoot}import/import_plataddr.xls"   class="btn btn-danger m-l-10 pull-left" data-toggle="modal"> <i class="fa fa-download m-r-10"></i> 模板下载 </a>
+                        </div>
+                        <div class="col-md-9 p-r-0">
+                            <form class="search-dtGrid-form" action="">
+                                <div class="form-group">
+                                    <input type="text" id="keyword" name="keyword" class="form-control" placeholder="请输入地址/币种进行搜索" />
+                                    <a href="javascript:;" class="btn btn-search" id="customSearch"> <i class="fa fa-search"></i></a> </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- 结束列表相关操作 -->
+
+                    <div id="dtGridContainer" class="dt-grid-container"></div>
+
+                    <div id="dtGridToolBarContainer" class="dt-grid-toolbar-container"></div>
+
+                    <!-- 开启新增模态窗口 -->
+                    <div class="modal fade" id="addModal" tabindex="-1" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                    <h4 class="modal-title"> 添加平台地址管理</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="addForm" autocomplete="off" action="${adminRoot}serviceFee/json/add" method="post" data-parsley-validate="true">
+                                        <div class="form-group">
+                                            <label class="control-label">地址别名<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                                            <input type="text" name="alias" class="form-control" placeholder="地址别名" data-tip="tooltip" data-placement="auto" data-original-title=""  data-parsley-required="true"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">币种<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                                            <select name="coinCurrency" id="coinCurrencyAdd" class="form-control" data-parsley-required="true">
+                                                <option value ="">-请选择币种-</option>
+                                                <option value ="BTC">BTC</option>
+                                                <option value ="ETH">ETH</option>
+                                                <option value ="USDT">USDT</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">地址<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                                            <input type="text" name="address" class="form-control" placeholder="地址" data-tip="tooltip" data-placement="auto" data-original-title="" data-parsley-required="true" onkeyup= "if(/[^\d.]/g.test(this.value)){this.value='';}" maxlength="21" data-parsley-length="[1, 21]" />
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer"> <a href="javascript:;" class="btn btn-white" data-dismiss="modal">放弃操作</a> <a href="javascript:;" class="btn btn-primary" data-loading-text="Loading..." nc-ajax-submit-target="addForm" nc-ajax-submit>确认提交</a> </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 结束新增模态窗口 -->
+
+                    <!-- 开启导入模态窗口 -->
+                    <div class="modal fade" id="importModel" tabindex="-1" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                    <h4 class="modal-title"> 添加平台地址管理</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label class="control-label col-md-2 col-sm-3">地址导入<i class="f-s-14 text-danger">*</i>&nbsp;:</label>
+                                        <!--<p class="text-info">封面图片尺寸要求宽度为360像素、高度为200像素；支持格式gif，jpg，png。</p>-->
+                                        <span class="btn btn-sm btn-white fileinput-button">
+                                <i class="fa fa-upload"></i>
+                                <span>文件上传</span>
+                                <input id="importExcel" type="file" name="file" autocomplete="off" multiple>
+                            </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 结束导入模态窗口 -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 结束布局行 -->
+</div>
+<!-- 结束页面内容 -->
+
+
+<!-- ================== 开始页面级JavaScrip调用 ================== -->
+<script src="${pluginsRoot}bootstrap-wizard/js/bwizard.js"></script>
+<!-- 表单checkbox项 -->
+<script src="${pluginsRoot}bootstrap-switch/bootstrap-switch.min.js"></script>
+<!-- 日历控件 -->
+<script src="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/WdatePicker.js" defer="defer"></script>
+<script src="${jsRoot}fn/platUserAddress.handle.js"></script>
+<!-- ================== 结束页面级JavaScrip调用 ================== -->
+</@c.html>

@@ -1,0 +1,221 @@
+<#import "/layout.html" as c>
+    <#import "/list_layout.html" as list>
+        <#assign alertList = []/>
+        <@c.html title="Index">
+        <!-- ================== 开始页面级CSS调用 ================== -->
+        <link href="${pluginsRoot}bootstrap-wizard/css/bwizard.min.css" rel="stylesheet"/>
+        <!-- 日历控件 -->
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/WdatePicker.css" rel="stylesheet"/>
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/default/datepicker.css" rel="stylesheet"/>
+        <!-- ================== 结束页面级CSS调用 ================== -->
+        <@list.html title="提币管理列表" subTitle="提币管理" alertList=alertList permi="" addBtn=false searchHint="请输入手机号/姓名/币种进行搜索">
+
+        <!-- 开始用户权限参数 -->
+        <@shiro.hasPermission name="sys:mentionCoin:input">
+            <input type="hidden" id="inputPermi" value="1"/>
+        </@shiro.hasPermission>
+        <@shiro.hasPermission name="sys:mentionCoin:audit">
+            <input type="hidden" id="auditPermi" value="1"/>
+        </@shiro.hasPermission>
+        <@shiro.hasPermission name="sys:mentionCoin:detail">
+            <input type="hidden" id="detailPermi" value="1"/>
+        </@shiro.hasPermission>
+<!-- 结束用户权限参数 -->
+
+<!-- 开启录入TXID模态窗口 -->
+<div class="modal fade" id="inputModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"> 录入TxId </h4>
+            </div>
+            <div class="modal-body">
+                <form id="inputForm" autocomplete="off" action="${adminRoot}mentionCoin/json/input" method="post" data-parsley-validate="true">
+                    <input type="hidden" value="" name="id"/>
+                    <div class="form-group">
+                        <label class="control-label">转币TxId<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                        <input type="text" name="txId" class="form-control" placeholder="转币TxId" data-tip="tooltip" data-placement="auto" data-original-title=""  data-parsley-required="true"/>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer"> <a href="javascript:;" class="btn btn-white" data-dismiss="modal">放弃操作</a> <a href="javascript:;" class="btn btn-primary" data-loading-text="Loading..." nc-ajax-submit-target="inputForm" nc-ajax-submit>确认提交</a> </div>
+        </div>
+    </div>
+</div>
+<!-- 结束录入TXID模态窗口 -->
+
+
+<!-- 开启审核模态窗口 -->
+<div class="modal fade" id="auditModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"> 提币确认</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="control-label">手机号&nbsp;: </label>
+                    <input type="text" name="mobile" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">真实姓名&nbsp;: </label>
+                    <input type="text" name="realname" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">证件类型&nbsp;: </label>
+                    <input type="text" name="idType" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">证件号码&nbsp;: </label>
+                    <input type="text" name="idNo" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">客户提币地址&nbsp;: </label>
+                    <input type="text" name="userMentionAddr" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                </div>
+                <form id="editForm" autocomplete="off" action="${adminRoot}mentionCoin/json/audit" method="post" data-parsley-validate="true">
+                <div class="form-group">
+                    <label class="control-label">平台付币地址<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                    <input type="text" name="platPayAddr" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" data-parsley-required="true"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">TxId&nbsp;: </label>
+                    <input type="text" name="txId" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                </div>
+                    <input type="hidden" value="" name="id"/>
+                    <input type="hidden" value="" name="userId"/>
+                    <div class="form-group">
+                        <label class="control-label">提币币种&nbsp;: </label>
+                        <input type="text" name="coinCurrency" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">提币数量&nbsp;: </label>
+                        <input type="text" name="amount" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">提现手续费&nbsp;: </label>
+                        <input type="text" name="serviceFee" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">状态<i class="f-s-14 text-danger">*</i> &nbsp;: </label>
+                        <div>
+                            <input type="checkbox" class="statecEdit" autocomplete="off"
+                                   data-input-name="state"
+                                   data-size="small"
+                                   data-on-color="primary"
+                                   data-on-text="通过"
+                                   data-off-text="不通过"
+                                   data-input-true="1"
+                                   data-input-false="2"
+                                   checked/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"> 备注 <i class="f-s-14 text-danger">*</i>&nbsp;:</label>
+                        <textarea name="confirmRemark" class="form-control" placeholder="请输入备注" rows="3"
+                                  data-original-title="选填选项，可使用中文、英文、数字，内容长度控制在0-200个字符。"
+                                  data-parsley-required="false" data-parsley-length="[0, 200]"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer"> <a href="javascript:;" class="btn btn-white" data-dismiss="modal">放弃操作</a> <a href="javascript:;" class="btn btn-primary" data-loading-text="Loading..." nc-ajax-submit-target="editForm" nc-ajax-submit>确认提交</a> </div>
+        </div>
+    </div>
+</div>
+<!-- 结束审核模态窗口 -->
+
+<!-- 开始查看模态窗口 -->
+<div class="modal fade" id="detailModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"> 提币详情 </h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label class="control-label">真实姓名&nbsp;: </label>
+                        <input type="text" name="realname" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">手机号码&nbsp;: </label>
+                        <input type="text" name="mobile" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">证件类型&nbsp;: </label>
+                         <input type="text" name="idType" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">证件号码&nbsp;: </label>
+                         <input type="text" name="idNo" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">提币数量&nbsp;: </label>
+                        <input type="text" name="amount" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">提币币种&nbsp;: </label>
+                        <input type="text" name="coinCurrency" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">到账数量&nbsp;: </label>
+                        <input type="text" name="toAmount" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">手续费&nbsp;: </label>
+                        <input type="text" name="serviceFee" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">客户提币地址&nbsp;: </label>
+                        <input type="text" name="userMentionAddr" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">平台付币地址&nbsp;: </label>
+                        <input type="text" name="platPayAddr" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">转币TxId&nbsp;: </label>
+                        <input type="text" name="txId" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">状态&nbsp;: </label>
+                         <input type="text" name="state" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">提币时间&nbsp;: </label>
+                            <input type="text" name="createTime" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">确认时间&nbsp;: </label>
+                        <input type="text" name="confirmTime" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">确认人&nbsp;: </label>
+                        <input type="text" name="confirmor" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">备注&nbsp;:</label>
+                         <textarea name="confirmRemark" class="form-control" placeholder="" rows="3" data-original-title="" readonly="true"></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 结束查看模态窗口 -->
+
+
+
+</@list.html>
+<!-- ================== 开始页面级JavaScrip调用 ================== -->
+<script src="${pluginsRoot}bootstrap-wizard/js/bwizard.js"></script>
+<!-- 表单checkbox项 -->
+<script src="${pluginsRoot}bootstrap-switch/bootstrap-switch.min.js"></script>
+<!-- 日历控件 -->
+<script src="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/WdatePicker.js" defer="defer"></script>
+<script src="${jsRoot}fn/mentionCoin.handle.js"></script>
+<!-- ================== 结束页面级JavaScrip调用 ================== -->
+</@c.html>

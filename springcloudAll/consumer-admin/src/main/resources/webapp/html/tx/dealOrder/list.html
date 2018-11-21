@@ -1,0 +1,145 @@
+<#import "/layout.html" as c>
+    <#import "/list_layout.html" as list>
+        <#assign alertList = []/>
+        <@c.html title="Index">
+        <!-- ================== 开始页面级CSS调用 ================== -->
+        <link href="${pluginsRoot}bootstrap-wizard/css/bwizard.min.css" rel="stylesheet"/>
+        <!-- 日历控件 -->
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/WdatePicker.css" rel="stylesheet"/>
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/default/datepicker.css" rel="stylesheet"/>
+        <!-- ================== 结束页面级CSS调用 ================== -->
+        <@list.html title="成交管理列表" subTitle="成交管理" alertList=alertList permi="" addBtn=false searchHint="请输入资产代码/成交编号进行搜索">
+
+        <!-- 开始用户权限参数 -->
+        <@shiro.hasPermission name="sys:dealOrder:detail">
+            <input type="hidden" id="detailPermi" value="1"/>
+        </@shiro.hasPermission>
+<!-- 结束用户权限参数 -->
+
+<!-- 开始查看模态窗口 -->
+<div class="modal fade" id="detailModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"> 成交详情 </h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <h5 class="modal-title">委托人信息</h5>
+                    <div class="form-group">
+                        <label class="control-label">真实姓名&nbsp;: </label>
+                        <input type="text" name="realname" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">手机号码&nbsp;: </label>
+                        <input type="text" name="mobile" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">证件类型&nbsp;: </label>
+                        <input type="text" name="idType" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">证件号码&nbsp;: </label>
+                        <input type="text" name="idNo" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <h5 class="modal-title">子委托信息</h5>
+                    <div class="form-group">
+                        <label class="control-label">子委托编号&nbsp;: </label>
+                        <input type="text" name="entrustNo" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">委托方式&nbsp;: </label>
+                        <input type="text" name="style" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">分区&nbsp;: </label>
+                        <input type="text" name="coinCurrency" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">委托时间&nbsp;: </label>
+                        <input type="text" name="subDel.createTime" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">委托货币代码&nbsp;: </label>
+                        <input type="text" name="coinCode" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">委托量&nbsp;: </label>
+                        <input type="text" name="subDel.amount" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">委托价&nbsp;: </label>
+                        <input type="text" name="subDel.price" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">委托交易所&nbsp;: </label>
+                        <input type="text" name="subDel.exchange" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">交易额&nbsp;: </label>
+                        <input type="text" name="subDel.gmv" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">状态&nbsp;: </label>
+                        <input type="text" name="state" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <h5 class="modal-title">成交信息</h5>
+                    <div class="form-group">
+                        <label class="control-label">成交编号&nbsp;: </label>
+                        <input type="text" name="businessNo" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">成交方式&nbsp;: </label>
+                        <input type="text" name="subDel.style" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">成交价格&nbsp;: </label>
+                        <input type="text" name="price" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">成交时间&nbsp;: </label>
+                        <input type="text" name="dealTime" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">成交额&nbsp;: </label>
+                        <input type="text" name="gmv" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">成交量&nbsp;: </label>
+                        <input type="text" name="amount" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">成交交易所&nbsp;: </label>
+                        <input type="text" name="exchange" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">平台手续费&nbsp;: </label>
+                        <input type="text" name="platFee" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">交易手续费&nbsp;: </label>
+                        <input type="text" name="serviceFee" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">成交母账号&nbsp;: </label>
+                        <input type="text" name="motherAccount" class="form-control" placeholder="" data-tip="tooltip" data-placement="auto" readonly="true"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 结束查看模态窗口 -->
+
+
+</@list.html>
+<!-- ================== 开始页面级JavaScrip调用 ================== -->
+<script src="${pluginsRoot}bootstrap-wizard/js/bwizard.js"></script>
+<!-- 表单checkbox项 -->
+<script src="${pluginsRoot}bootstrap-switch/bootstrap-switch.min.js"></script>
+<!-- 日历控件 -->
+<script src="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/WdatePicker.js" defer="defer"></script>
+<script src="${jsRoot}tx/dealOrder.handle.js"></script>
+<!-- ================== 结束页面级JavaScrip调用 ================== -->
+</@c.html>

@@ -1,0 +1,292 @@
+<#import "/layout.html" as c>
+    <#import "/list_layout.html" as list>
+        <#assign alertList = []/>
+        <@c.html title="Index">
+        <!-- ================== 开始页面级CSS调用 ================== -->
+        <link href="${pluginsRoot}bootstrap-wizard/css/bwizard.min.css" rel="stylesheet"/>
+        <!-- 日历控件 -->
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/WdatePicker.css" rel="stylesheet"/>
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/default/datepicker.css" rel="stylesheet"/>
+        <!-- ================== 结束页面级CSS调用 ================== -->
+        <@list.html title="代码对管理" subTitle="代码对管理" alertList=alertList permi="sys:codePairConfig:add" addBtn=true searchHint="请输入资产代码进行搜索">
+
+        <@shiro.hasPermission name="sys:commodity:edit">
+        <input type="hidden" id="commodityEdit" value="1"/>
+        </@shiro.hasPermission>
+
+    <!-- 开始新增资产代码模态窗口 -->
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title"> 添加代码对配置 <a class="btn btn-info btn-xs m-l-5" role="button" data-toggle="collapse" href="#OperationTips" aria-expanded="true" title="操作提示"><i class="fa fa-exclamation"></i> 提示 </a> </h4>
+                </div>
+                <div class="modal-body">
+                    <ul class="collapse in text-info p-b-10 p-l-15" role="tabpanel" id="OperationTips">
+                        <li>请根据表单提示信息正确填写。</li>
+                    </ul>
+                    <form class="form-horizontal form-bordered p-0" action="${adminRoot}codePairConfig/json/add" id="addForm" method="post" autocomplete="off" data-parsley-validate="true">
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">资产代码 &nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                             <select name="code" id="codeAdd" class="form-control" data-parsley-required="true">
+                                 <option value ="">-请选择资产代码-</option>
+                                 <#if commoditys??>
+                                     <#list commoditys as com>
+                                         <option value ="${com.code!}">${com.code}</option>
+                                     </#list>
+                                 </#if>
+                             </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label  col-md-2 col-sm-3">交易所&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;:  </label>
+                            <div class="col-md-9 col-sm-8">
+                                <#if exchanges??>
+                                    <#list exchanges as ex1>
+                                        <span class="p-l-0"><label class="checkbox-inline"> <input  class="exchange" type="checkbox" name="exNumbers" value="${ex1.exNo!}">${ex1.name!}</label></span>
+                                    </#list>
+                                </#if>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label  col-md-2 col-sm-3">分区&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;:  </label>
+                            <div class="col-md-9 col-sm-8">
+                                    <input type="radio" name="baseCode"  value="BTC"> BTC
+                                    <input type="radio" name="baseCode"  value="USDT"> USDT
+                                    <input type="radio" name="baseCode"  value="ETH"> ETH
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">状态&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;:  </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="checkbox" id="addState" class="state" autocomplete="off"
+                                       data-input-name="state"
+                                       data-size="small"
+                                       data-on-color="primary"
+                                       data-on-text="启用"
+                                       data-off-text="停用"
+                                       data-input-true="1"
+                                       data-input-false="0"
+                                       checked/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">类型&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;:  </label>
+                            <div class="col-md-9 col-sm-8">
+                            <select name="type" id="typeAdd" class="form-control" data-parsley-required="true">
+                                <option value ="1">主流</option>
+                                <option value ="2">非主流</option>
+                            </select>
+                        </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">是否在App主页显示&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;:  </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="checkbox" id="addIsDisplayOnApp" class="isDisplayOnApp" autocomplete="off"
+                                       data-input-name="isDisplayOnApp"
+                                       data-size="small"
+                                       data-on-color="primary"
+                                       data-on-text="是"
+                                       data-off-text="否"
+                                       data-input-true="1"
+                                       data-input-false="0"
+                                       checked/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">限价最小下单数量&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="limitMinAmount" class="form-control" placeholder="请输入限价最大下单数量" maxlength="15" autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，输入数字。" data-parsley-required="true"  data-parsley-range="[0, 100000]"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">限价最大下单数量&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="limitMaxAmount" class="form-control" placeholder="请输入限价最大下单数量" maxlength="15" autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，输入数字。" data-parsley-required="true" data-parsley-range="[0, 100000]"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">市价最小买入量&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="marketMinBuyAmount" class="form-control" placeholder="请输入市价最小买入量" maxlength="15" autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，输入数字。" data-parsley-required="true"  data-parsley-range="[0, 100000]"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">市价最大买入量&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="marketMaxBuyAmount" class="form-control" placeholder="请输入市价最大买入量" maxlength="15" autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，输入数字。" data-parsley-required="true"  data-parsley-range="[0, 100000]"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">市价最小卖出量&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="marketMinSellAmount" class="form-control" placeholder="请输入市价最小卖出量" maxlength="15" autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，输入数字。" data-parsley-required="true"  data-parsley-range="[0, 100000]"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">市价最大卖出量&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="marketMaxSellAmount" class="form-control" placeholder="请输入市价最大卖出量" maxlength="15" autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，输入数字。" data-parsley-required="true" data-parsley-range="[0, 100000]"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">最小行情点位&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="minQuotePoint" class="form-control" placeholder="请输入最小行情点位" maxlength="15" autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，输入数字。" data-parsley-required="true" W data-parsley-range="[0, 1000000]"/>
+                            </div>
+                        </div>
+                </form>
+            </div>
+            <div class="modal-footer"><a href="javascript:;" class="btn btn-white" data-dismiss="modal">放弃操作</a><a href="javascript:;" class="btn btn-success" data-loading-text="Loading..." nc-ajax-submit-target="addForm" nc-ajax-submit>确认提交</a></div>
+        </div>
+    </div>
+    </div>
+    <!-- 结束新增资产代码模态窗口 -->
+
+    <!--&lt;!&ndash; 开始编辑资产代码模态窗口 &ndash;&gt;-->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title"> 编辑资产代码资料 <a class="btn btn-info btn-xs m-l-5" role="button" data-toggle="collapse" href="#OperationTips1" aria-expanded="true" title="操作提示"><i class="fa fa-exclamation"></i> 提示 </a> </h4>
+                </div>
+                <div class="modal-body">
+                    <ul class="collapse in text-info p-b-10 p-l-15" role="tabpanel" id="OperationTips1">
+                        <li>请根据表单提示信息正确修改。</li>
+                    </ul>
+                    <form class="form-horizontal form-bordered p-0" action="${adminRoot}codePairConfig/json/edit" id="editForm" method="post" autocomplete="off" data-parsley-validate="true">
+                        <input type="hidden" id="id" name="id"/>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">资产代码 &nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8 ">
+                                <select name="code" id="editCode" class="form-control" data-parsley-required="true" >
+                                    <option value ="">-请选择资产代码-</option>
+                                <#if commoditys??>
+                                    <#list commoditys as com>
+                                        <option value ="${com.code!}">${com.code}</option>
+                                    </#list>
+                                </#if>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label  col-md-2 col-sm-3">交易所&nbsp;: <i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <#if exchanges??>
+                                    <#list exchanges as ex>
+                                        <span class="p-l-0"><label class="checkbox-inline"> <input  type="checkbox" name="exNumbers" value="${ex.exNo!}">${ex.name!}</label></span>
+                                    </#list>
+                                </#if>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label  col-md-2 col-sm-3">分区&nbsp;: <i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="radio" name="baseCode"  value="BTC"> BTC
+                                <input type="radio" name="baseCode"  value="USDT"> USDT
+                                <input type="radio" name="baseCode"  value="ETH"> ETH
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">状态&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;:  </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="checkbox" class="state" autocomplete="off"
+                                       data-input-name="state"
+                                       data-size="small"
+                                       data-on-color="primary"
+                                       data-on-text="启用"
+                                       data-off-text="停用"
+                                       data-input-true="1"
+                                       data-input-false="0"
+                                       checked/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">资产代码类型&nbsp;: <i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <select name="type" id="typeEdit" class="form-control" data-parsley-required="true">
+                                    <option value ="1">主流</option>
+                                    <option value ="2">非主流</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">是否在App主页显示&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;:  </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="checkbox" class="isDisplayOnApp" autocomplete="off"
+                                       data-input-name="isDisplayOnApp"
+                                       data-size="small"
+                                       data-on-color="primary"
+                                       data-on-text="是"
+                                       data-off-text="否"
+                                       data-input-true="1"
+                                       data-input-false="0"
+                                       checked/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">限价最小下单数量&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="limitMinAmount" class="form-control" placeholder="请输入限价最大下单数量" maxlength="15" autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，输入数字。" data-parsley-required="true"  data-parsley-range="[0, 100000]"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">限价最大下单数量&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="limitMaxAmount" class="form-control" placeholder="请输入限价最大下单数量" maxlength="15" autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，输入数字。" data-parsley-required="true" data-parsley-range="[0, 100000]"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">市价最小买入量&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="marketMinBuyAmount" class="form-control" placeholder="请输入市价最小买入量" maxlength="15" autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，输入数字。" data-parsley-required="true"  data-parsley-range="[0, 100000]"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">市价最大买入量&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="marketMaxBuyAmount" class="form-control" placeholder="请输入市价最大买入量" maxlength="15" autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，输入数字。" data-parsley-required="true"  data-parsley-range="[0, 100000]"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">市价最小卖出量&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="marketMinSellAmount" class="form-control" placeholder="请输入市价最小卖出量" maxlength="15" autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，输入数字。" data-parsley-required="true"  data-parsley-range="[0, 100000]"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">市价最大卖出量&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="marketMaxSellAmount" class="form-control" placeholder="请输入市价最大卖出量" maxlength="15" autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，输入数字。" data-parsley-required="true" data-parsley-range="[0, 100000]"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">最小行情点位&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="minQuotePoint" class="form-control" placeholder="请输入最小行情点位" maxlength="15" autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，输入数字。" data-parsley-required="true" W data-parsley-range="[0, 1000000]"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer"><a href="javascript:;" class="btn btn-white" data-dismiss="modal">放弃操作</a><a href="javascript:;" class="btn btn-success" data-loading-text="Loading..." nc-ajax-submit-target="editForm" nc-ajax-submit>确认提交</a></div>
+            </div>
+        </div>
+    </div>
+    <!-- 结束编辑资产代码模态窗口 -->
+
+</@list.html>
+<!-- ================== 开始页面级JavaScrip调用 ================== -->
+<script src="${pluginsRoot}bootstrap-wizard/js/bwizard.js"></script>
+<!-- 表单checkbox项 -->
+<script src="${pluginsRoot}bootstrap-switch/bootstrap-switch.min.js"></script>
+<!-- 日历控件 -->
+<script src="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/WdatePicker.js" defer="defer"></script>
+<script src="${jsRoot}exchange/codePairConfig.handle.js"></script>
+<!-- ================== 结束页面级JavaScrip调用 ================== -->
+</@c.html>
+

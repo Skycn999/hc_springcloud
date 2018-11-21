@@ -1,0 +1,271 @@
+<#import "/layout.html" as c>
+<@c.html title="Index">
+
+  <!-- 开始页面内容 -->
+  <div id="content" class="content">
+    <!-- 开始面包屑导航 -->
+    <ol class="breadcrumb pull-right">
+      <li><a href="javascript:;">首页</a></li>
+        <#list menuState.breadCrumbList as breadCrumb>
+            <li class="">${breadCrumb}</li>
+        </#list>
+    </ol>
+    <!-- 结束面包屑导航 -->
+    <!-- 开始页头区域 -->
+    <h1 class="page-header">菜单设置<small class="m-l-10">管理网站相关菜单类型内容设置</small></h1>
+    <!-- 结束页头区域 -->
+    <!-- 开始布局行 -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-inverse">
+          <div class="panel-heading">
+            <div class="panel-heading-btn"><a href="#listTip" class="btn btn-xs btn-icon btn-circle btn-info" role="button" data-toggle="collapse" aria-expanded="true" title="操作提示"><i class="fa fa-lightbulb-o"></i></a><a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"> <i class="fa fa-expand"></i></a><a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a></div>
+            <h4 class="panel-title">菜单列表</h4>
+          </div>
+          <div class="panel-body">
+            <!-- 开始操作提示 -->
+            <div class="alert alert-info collapse in" role="tabpanel" id="listTip">
+              <h4>操作提示</h4>
+              <ul>
+                <li>网站所涉及的所有菜单内容均来源于此设置项，强烈建议对该项慎重进行操作修改。</li>
+                <li>所属大区为默认的全国性的几个大区域，只有省级菜单才需要填写大区域，目前全国几大区域有:华北、东北、华东、华南、西南、西北、港澳台、海外。</li>
+                <li>所在层级为该菜单的所在的层级深度，如北京&nbsp;&#8250;&nbsp;北京市&nbsp;&#8250;&nbsp;朝阳区，其中北京层级为1，北京市层级为2，朝阳区层级为3。</li>
+              </ul>
+            </div>
+            <!-- 结束操作提示 -->
+
+            <!-- 开始列表相关操作 -->
+            <div class="clearfix">
+              <div class="col-md-3 p-l-0">
+                  <a id="returnParent" href="javascript:;" class="btn btn-white pull-left m-r-5 m-b-5 hidden"> <i class="fa fa-lg fa-level-up m-r-5"></i>返回上级</a>
+                  <a href="#addModal" class="btn btn-success pull-left m-r-5 m-b-5" data-toggle="modal"> <i class="fa fa-lg fa-plus m-r-5"></i>新增数据</a>
+              </div>
+              <div class="col-md-9 p-r-0">
+                <form class="search-dtGrid-form" action="">
+                  <div class="form-group">
+                    <input type="text" id="keyword" name="keyword" class="form-control" placeholder="请输入菜单名称作为关键字进行搜索" />
+                    <a href="javascript:;" class="btn btn-search" id="customSearch"> <i class="fa fa-search"></i></a> </div>
+                </form>
+              </div>
+            </div>
+            <!-- 结束列表相关操作 -->
+
+            <div id="dtGridContainer" class="dt-grid-container"></div>
+
+            <div id="dtGridToolBarContainer" class="dt-grid-toolbar-container"></div>
+
+            <!-- 开始新增菜单模态窗口 -->
+            <div class="modal fade" id="addModal" tabindex="-1" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">新增菜单<a class="btn btn-info btn-xs m-l-10" role="button" data-toggle="collapse" href="#OperationTips" aria-expanded="false" title="操作提示"><i class="fa fa-exclamation"></i>&nbsp;提示</a></h4>
+                  </div>
+                  <div class="modal-body">
+                    <!-- 开始操作提示 -->
+                    <ul class="collapse text-info p-b-10 p-l-15" role="tabpanel" id="OperationTips">
+                      <li  class="m-b-10">请认真填写菜单名称、菜单序号等信息，这些信息将会影响后台管理系统功能。</li>
+                      <li  class="m-b-10">菜单类型可选有“目录”、“菜单”、“按钮”，本次操作默认为“目录”类型，如需增加“菜单”、“按钮”类型的菜单请在编辑-新增下级菜单中新增。</li>
+                      <li  class="m-b-10">所在层级和父级菜单信息会根据您的额操作自动填写，无需您再次选择。</li>
+                    </ul>
+                    <!-- 结束操作提示 -->
+                    <!-- 开始新增菜单设置模块 -->
+                    <form id="addForm" action="${adminRoot}menu/json/add" method="post" autocomplete="off" data-parsley-validate="true">
+
+                        <div class="form-group">
+                            <label class="control-label">菜单类型&nbsp;:</label>
+                            <input disabled type="text" class="form-control" value="目录"/>
+                            <input name="type" type="hidden" value="0"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">菜单名称<i class="f-s-14 text-danger">*</i>&nbsp;:</label>
+                            <input type="text" class="form-control" name="name" autocomplete="off" placeholder="请输入菜单名称" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="必填选项，可使用中英文、内容长度控制在2-30个字符。"
+                                   data-parsley-required="true"
+                                   data-parsley-length="[2, 30]"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">菜单序号<i class="f-s-14 text-danger">*</i>&nbsp;:</label>
+                            <input type="number" class="form-control" name="sortNo" autocomplete="off" placeholder="请输入菜单序号" value="0" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="必填选项，可使100以内正整数数。"
+                                   data-parsley-length="[1, 3]"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">所在层级&nbsp;:</label>
+                            <input disabled type="text" class="form-control" value="1"/>
+                            <input name="level" type="hidden" value="1"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">父级菜单&nbsp;:</label>
+                            <input disabled type="text" class="form-control" value="--"/>
+                            <input name="parentId"  type="hidden" value="0"/>
+                        </div>
+                    </form>
+                    <!-- 结束新增菜单设置模块-->
+                  </div>
+                  <div class="modal-footer">
+                      <a href="javascript:;" class="btn btn-white" data-dismiss="modal">取消编辑</a>
+                      <a href="javascript:;" class="btn btn-primary" data-loading-text="Loading..." nc-ajax-submit-target="addForm" nc-ajax-submit>确认提交</a> </div>
+                </div>
+              </div>
+            </div>
+            <!-- 结束新增菜单模态窗口 -->
+
+            <!-- 开始编辑菜单模态窗口 -->
+            <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">编辑菜单<a class="btn btn-info btn-xs m-l-10" role="button" data-toggle="collapse" href="#editOperationTips" aria-expanded="false" title="操作提示"><i class="fa fa-exclamation"></i>&nbsp;提示</a></h4>
+                  </div>
+                  <div class="modal-body">
+                    <!-- 开始操作提示 -->
+                    <ul class="collapse text-info p-b-10 p-l-15" role="tabpanel" id="editOperationTips">
+                        <li  class="m-b-10">请认真填写菜单名称、菜单URL、权限标识、菜单序号等信息，这些信息将会影响后台管理系统功能。</li>
+                        <li  class="m-b-10">菜单类型可选有“目录”、“菜单”、“按钮”，进项菜单编辑时不可更改菜单类型。</li>
+                        <li  class="m-b-10">所在层级和父级菜单信息会根据您的额操作自动填写，无需您再次选择。</li>
+                    </ul>
+                    <!-- 结束操作提示 -->
+                    <!-- 开始编辑菜单设置模块 -->
+                    <form id="editForm" action="${adminRoot}menu/json/edit" method="post" autocomplete="off" data-parsley-validate="true">
+                      <input type="hidden" name="id" value="">
+                        <div class="form-group">
+                            <label class="control-label">菜单类型&nbsp;:</label>
+                            <input name="typeName" disabled type="text" class="form-control"/>
+                            <input name="type" type="hidden"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">菜单名称<i class="f-s-14 text-danger">*</i>&nbsp;:</label>
+                            <input type="text" class="form-control" name="name" autocomplete="off" placeholder="请输入菜单名称" data-tip="tooltip" data-placement="auto"
+                                             data-original-title="必填选项，可使用中英文、内容长度控制在2-30个字符。"
+                                             data-parsley-required="true"
+                                             data-parsley-length="[2, 30]"/>
+                        </div>
+                        <div class="form-group menuUrl">
+                            <label class="control-label">菜单URL&nbsp;:</label>
+                            <input type="text" class="form-control" name="url" autocomplete="off" placeholder="请输入菜单URL" data-tip="tooltip" data-placement="auto"
+                               data-original-title="选填选项，可使用英文、数字，内容长度控制在2-50个字符。"
+                               data-parsley-length="[2, 50]"/>
+                        </div>
+                        <div class="form-group permission">
+                            <label class="control-label">权限标识&nbsp;:</label>
+                            <input type="text" class="form-control" name="permission" autocomplete="off" placeholder="请输入授权标识" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="选填选项，可使用英文、数字，内容长度控制在2-30个字符。"
+                                   data-parsley-length="[2, 30]"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">菜单序号<i class="f-s-14 text-danger">*</i>&nbsp;:</label>
+                            <input type="text" class="form-control" name="sortNo" autocomplete="off" placeholder="请输入菜单序号" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="必填选项，可使100以内正整数数。"
+                                   data-parsley-length="[1, 3]"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">所在层级&nbsp;:</label>
+                            <input name="levelHide" disabled type="text" class="form-control"/>
+                            <input name="level" type="hidden" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">父级菜单&nbsp;:</label>
+                            <input name="parentName" disabled type="text" class="form-control"/>
+                            <input name="parentId"  type="hidden" />
+                        </div>
+                    </form>
+                    <!-- 结束编辑菜单设置模块-->
+                  </div>
+
+                  <div class="modal-footer">
+                    <a href="javascript:;" class="btn btn-white" data-dismiss="modal">取消编辑</a>
+                    <a href="javascript:;" class="btn btn-primary" data-loading-text="Loading..." nc-ajax-submit-target="editForm" nc-ajax-submit>确认提交</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 结束新增菜单模态窗口 -->
+
+            <!-- 开始新增下级菜单模态窗口 -->
+            <div class="modal fade" id="addChildModal" tabindex="-1" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">新增菜单<a class="btn btn-info btn-xs m-l-10" role="button" data-toggle="collapse" href="#addChildOperationTips" aria-expanded="false" title="操作提示"><i class="fa fa-exclamation"></i>&nbsp;提示</a></h4>
+                  </div>
+                  <div class="modal-body">
+                    <!-- 开始操作提示 -->
+                    <ul class="collapse text-info p-b-10 p-l-15" role="tabpanel" id="addChildOperationTips">
+                        <li  class="m-b-10">请认真填写菜单名称、菜单URL、权限标识、菜单序号等信息，这些信息将会影响后台管理系统功能。</li>
+                        <li  class="m-b-10">菜单类型可选有“目录”、“菜单”、“按钮”，请根据您的需要选择菜单类型，其中当您选择非“目录”类型的菜单时，菜单URL、权限标识为必填项。</li>
+                        <li  class="m-b-10">所在层级和父级菜单信息会根据您的额操作自动填写，无需您再次选择。</li>
+                    </ul>
+                    <!-- 结束操作提示 -->
+                    <!-- 开始新增下级菜单设置模块 -->
+                    <form id="addChildForm" action="${adminRoot}menu/json/add" method="post" autocomplete="off" data-parsley-validate="true">
+                        <div class="form-group">
+                            <label class="control-label">菜单类型&nbsp;: </label>
+                            <div>
+                                <span class="p-l-0"><label class="radio-inline"><input type="radio" data-parsley-multiple="showType" id="type0" name="type" value="0" checked="checked">目录</label></span>
+                                <span class="p-l-0"><label class="radio-inline"><input type="radio" data-parsley-multiple="showType" id="type1" name="type" value="1">菜单</label></span>
+                                <span class="p-l-0"><label class="radio-inline"><input type="radio" data-parsley-multiple="showType" id="type2" name="type" value="2">按钮</label></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">菜单名称<i class="f-s-14 text-danger">*</i>&nbsp;:</label>
+                            <input type="text" class="form-control" name="name" autocomplete="off" placeholder="请输入菜单名称" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="必填选项，可使用中英文、内容长度控制在2-30个字符。"
+                                   data-parsley-required="true"
+                                   data-parsley-length="[2, 30]"/>
+                        </div>
+                        <div class="form-group menuUrl">
+                            <label class="control-label">菜单URL&nbsp;:</label>
+                            <input type="text" class="form-control" name="url" autocomplete="off" placeholder="请输入菜单URL" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="选填选项，可使用英文、数字，内容长度控制在2-50个字符。"
+                                   data-parsley-length="[2, 50]"/>
+                        </div>
+                        <div class="form-group permission">
+                            <label class="control-label">权限标识&nbsp;:</label>
+                            <input type="text" class="form-control" name="permission" autocomplete="off" placeholder="请输入授权标识" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="选填选项，可使用英文、数字，内容长度控制在2-30个字符。"
+                                   data-parsley-length="[1, 30]"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">菜单序号<i class="f-s-14 text-danger">*</i>&nbsp;:</label>
+                            <input type="number" class="form-control" name="sortNo" autocomplete="off" placeholder="请输入菜单序号" value="0" data-tip="tooltip" data-placement="auto"
+                                   data-original-title="必填选项，可使100以内正整数数。"
+                                   data-parsley-required="true"
+                                   data-parsley-length="[1, 3]"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">所在层级&nbsp;:</label>
+                            <input name="levelHide" disabled type="text" class="form-control"/>
+                            <input name="level" type="hidden" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">父级菜单&nbsp;:</label>
+                            <input name="parentName" disabled type="text" class="form-control"/>
+                            <input name="parentId"  type="hidden" />
+                        </div>
+                    </form>
+                    <!-- 结束新增下级菜单设置模块-->
+                  </div>
+                  <div class="modal-footer">
+                      <a href="javascript:;" class="btn btn-white" data-dismiss="modal">取消编辑</a>
+                      <a id="addChildBtn" href="javascript:;" class="btn btn-primary" data-loading-text="Loading..." nc-ajax-submit-target="addChildForm" nc-ajax-submit>确认提交</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 结束新增下级菜单模态窗口 -->
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 结束布局行 -->
+  </div>
+  <!-- 结束页面内容 -->
+
+  <!-- ================== 开始页面级JavaScrip调用 ================== -->
+  <script src="${jsRoot}admin/menu.handle.js"></script>
+</@c.html>

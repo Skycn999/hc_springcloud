@@ -1,0 +1,81 @@
+server:
+  port: 8110
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+eureka:
+  client:
+    service-url:
+           defaultZone: http://admin:admin@localhost:8761/eureka/
+#           defaultZone: http://admin:admin@116.62.127.60:8761/eureka/
+        ##   defaultZone: http://admin:admin@13.211.205.147:8761/eureka/
+spring:
+  application:
+    name: consumer-web-syx-test
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    userExchange: userExchange-dev
+    userQueue: userQueue-dev
+    txExchange: txExchange-dev
+    txSellOutQueue: txSellOutQueue-dev
+    txBuyInQueue: txBuyInQueue-dev
+######################## redis
+    # Redis数据库索引(默认为0)
+  redis:
+    database: 0
+    # Redis服务器地址
+    host: 192.168.2.84
+    # Redis服务器连接端口
+    port: 6379
+    # Redis服务器连接密码(默认为空)
+    password:
+    # 连接超时时间(毫秒)
+    timeout: 20000
+    # 连接池最大连接数(使用负值表示没有限制)
+    pool:
+      max-active: 200
+    # 连接池最大阻塞等待时间(使用负值表示没有限制)
+      max-wait: 5
+    # 连接池中的最大空闲连接
+      max-idle: 20
+    # 连接池中的最小空闲连接
+      min-idle: 10
+#------------------------ redis end
+
+
+## hystrix 监控  只对加了@HystrixCommand注解的方法起作用。
+
+
+######################### 日志
+logging:
+  config: classpath:config/logback-spring.xml
+#------------------------ 日志end
+
+
+# 本地参数配置
+com:
+  mi:
+    kaptcha:
+      border: 'no'
+      border.color: 105,179,90
+      textproducer.font.color: 238,238,238
+      image.width: 100
+      image.height: 38
+      textproducer.font.size: 30
+      session.key: code
+      background.clear.from: 50,50,50
+      background.clear.to: 50,50,50
+      textproducer.char.length: 4
+      textproducer.font.names: Arial
+      textproducer.char.string: abcde2345678gfymnpwx
+      noise.impl: com.google.code.kaptcha.impl.NoNoise
+      obscurificator.impl: com.google.code.kaptcha.impl.Simple
+
+
+#feign后缀
+feignSuffix: lzj-test
+# 临时文件存放路径
+basePath: C:\Users\64649\

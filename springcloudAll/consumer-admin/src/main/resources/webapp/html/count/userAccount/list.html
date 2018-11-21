@@ -1,0 +1,22 @@
+<#import "/layout.html" as c>
+    <#import "/list_layout.html" as list>
+        <#assign alertList = []/>
+        <@c.html title="Index">
+        <!-- ================== 开始页面级CSS调用 ================== -->
+        <link href="${pluginsRoot}bootstrap-wizard/css/bwizard.min.css" rel="stylesheet"/>
+        <!-- 日历控件 -->
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/WdatePicker.css" rel="stylesheet"/>
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/default/datepicker.css" rel="stylesheet"/>
+        <!-- ================== 结束页面级CSS调用 ================== -->
+        <@list.html title="用户持仓汇总" subTitle="用户持仓汇总" alertList=alertList permi="xxx" addBtn=false searchHint="请输入交易所名称或资产代码进行搜索">
+
+    </@list.html>
+    <!-- ================== 开始页面级JavaScrip调用 ================== -->
+    <script src="${pluginsRoot}bootstrap-wizard/js/bwizard.js"></script>
+    <!-- 表单checkbox项 -->
+    <script src="${pluginsRoot}bootstrap-switch/bootstrap-switch.min.js"></script>
+    <!-- 日历控件 -->
+    <script src="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/WdatePicker.js" defer="defer"></script>
+    <script src="${jsRoot}count/userAccount.handle.js"></script>
+    <!-- ================== 结束页面级JavaScrip调用 ================== -->
+</@c.html>

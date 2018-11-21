@@ -1,0 +1,198 @@
+<#import "/layout.html" as c>
+    <#import "/list_layout.html" as list>
+        <#assign alertList = []/>
+        <@c.html title="Index">
+        <!-- ================== 开始页面级CSS调用 ================== -->
+        <link href="${pluginsRoot}bootstrap-wizard/css/bwizard.min.css" rel="stylesheet"/>
+        <!-- 日历控件 -->
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/WdatePicker.css" rel="stylesheet"/>
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/default/datepicker.css" rel="stylesheet"/>
+        <!-- ================== 结束页面级CSS调用 ================== -->
+        <@list.html title="风控设置列表" subTitle="风控设置管理" alertList=alertList permi="sys:riskControl:add" addBtn=true searchHint="请输入手机号/姓名进行搜索">
+
+        <!-- 开始用户权限参数 -->
+        <@shiro.hasPermission name="sys:riskControl:setting">
+            <input type="hidden" id="settingPermi" value="1"/>
+        </@shiro.hasPermission>
+<!-- 结束用户权限参数 -->
+<!-- 开启新增参数模态窗口 -->
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title"> 用户风控配置添加</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="addForm"class="form-horizontal form-bordered p-0" autocomplete="off" action="${adminRoot}riskControl/json/add" method="post" data-parsley-validate="true">
+                        <fieldset id="a">
+                            <legend id="a1">用户信息</legend>
+                        <div class="form-group">
+                            <label class="control-label col-md-3"><a data-target='#userModal' class='btn btn-sm btn-primary m-r-10' data-toggle='modal'><i class='fa fa-plus'>&nbsp;选择用户</i>&nbsp;</a> <i class="f-s-14 text-danger">*</i></label>
+                            <input  type="hidden" name="userId" value="">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">用户手机号&nbsp;: </label>
+                            <div class="col-md-9">
+                                <input type="text" id="mobile" class="form-control" placeholder="用户手机号" data-tip="tooltip" data-placement="auto" data-original-title=""    readonly="true"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">用户邮箱&nbsp;: </label>
+                            <div class="col-md-9">
+                                <input type="text" id ="email" class="form-control" placeholder="用户邮箱" data-tip="tooltip" data-placement="auto" data-original-title=""  readonly="true"/>
+                            </div>
+                        </div>
+                        </fieldset>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">净值风控模板&nbsp;: </label>
+                            <div class="col-md-9">
+                                <select name="netWorthTpl" id="netWorthAdd" class="form-control" >
+                                    <#if netWorths??>
+                                        <option value ="">请选择模板</option>
+                                        <#list netWorths as netWorth>
+                                            <option value ="${netWorth.tplNo!}">${netWorth.tplName!}</option>
+                                        </#list>
+                                    </#if>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">百分比风控状态&nbsp;: </label>
+                            <div class="col-md-9">
+                                <input type="checkbox" class="isEnable" autocomplete="off"
+                                       data-input-name="isEnableRiskControl"
+                                       data-size="small"
+                                       data-on-color="primary"
+                                       data-on-text="开启"
+                                       data-off-text="关闭"
+                                       data-input-true="1"
+                                       data-input-false="0"
+                                       checked/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">百分比风控模板&nbsp;: </label>
+                            <div class="col-md-9">
+                                <select name="percentTpl" id="percenAdd" class="form-control" >
+                                    <#if percents??>
+                                        <option value ="">请选择模板</option>
+                                        <#list percents as percent>
+                                            <option value ="${percent.tplNo!}">${percent.tplName!}</option>
+                                        </#list>
+                                    </#if>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">百分比风控期初值&nbsp;: </label>
+                            <div class="col-md-9">
+                                <input type="text" name="percentInitialBalance" class="form-control" placeholder="百分比风控期初值" data-tip="tooltip" data-placement="auto" data-original-title=""/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer"> <a href="javascript:;" class="btn btn-white" data-dismiss="modal">放弃操作</a> <a href="javascript:;" class="btn btn-primary" data-loading-text="Loading..." nc-ajax-submit-target="addForm" nc-ajax-submit>确认提交</a> </div>
+            </div>
+        </div>
+    </div>
+<!-- 结束新增参数模态窗口 -->
+
+
+<!-- 开启编辑参数模态窗口 -->
+<div class="modal fade" id="settingModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"> 设置模板
+                    <!--<a class="btn btn-info btn-xs m-l-10" role="button" data-toggle="collapse" href="#OperationTipsAdd" aria-expanded="true" title="操作提示"> <i class="fa fa-exclamation"></i> &nbsp;提示 </a> -->
+                </h4>
+            </div>
+            <div class="modal-body">
+                <!--<ul class="text-info p-b-15 p-l-15 collapse in" role="tabpanel" id="OperationTipsAdd">-->
+                <!--</ul>-->
+                <form id="editForm" class="form-horizontal form-bordered p-0" autocomplete="off" action="${adminRoot}riskControl/json/setting" method="post" data-parsley-validate="true">
+                    <input type="hidden" value="" name="id"/>
+                    <input type="hidden" value="" name="userId"/>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">净值风控模板&nbsp;: </label>
+                        <div class="col-md-9">
+                        <select name="netWorthTpl" id="netWorth" class="form-control">
+                            <#if netWorths??>
+                                <option value ="">请选择模板</option>
+                                <#list netWorths as netWorth>
+                                    <option value ="${netWorth.tplNo!}">${netWorth.tplName!}</option>
+                                </#list>
+                            </#if>
+                        </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">百分比风控状态&nbsp;: </label>
+                        <div class="col-md-9">
+                            <input type="checkbox" class="isEnable" autocomplete="off"
+                                   data-input-name="isEnableRiskControl"
+                                   data-size="small"
+                                   data-on-color="primary"
+                                   data-on-text="开启"
+                                   data-off-text="关闭"
+                                   data-input-true="1"
+                                   data-input-false="0"
+                                   checked/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">百分比风控模板&nbsp;: </label>
+                        <div class="col-md-9">
+                        <select name="percentTpl" id="percent" class="form-control" >
+                            <#if percents??>
+                                    <option value ="">请选择模板</option>
+                                <#list percents as percent>
+                                    <option value ="${percent.tplNo!}">${percent.tplName!}</option>
+                                </#list>
+                            </#if>
+                        </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">百分比风控期初值&nbsp;: </label>
+                        <div class="col-md-9">
+                        <input type="text" name="percentInitialBalance" class="form-control" placeholder="百分比风控期初值" data-tip="tooltip" data-placement="auto" data-original-title=""/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer"> <a href="javascript:;" class="btn btn-white" data-dismiss="modal">放弃操作</a> <a href="javascript:;" class="btn btn-primary" data-loading-text="Loading..." nc-ajax-submit-target="editForm" nc-ajax-submit>确认提交</a> </div>
+        </div>
+    </div>
+</div>
+<!-- 结束编辑参数模态窗口 -->
+
+<!--开始选择模态窗口 -->
+<div class="modal fade" id="userModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">用户列表<a class="btn btn-info btn-xs m-l-10" role="button" data-toggle="collapse" href="<#--#OperationTips-->" aria-expanded="false" title="操作提示"><i class="fa fa-exclamation"></i>&nbsp;提示</a></h4>
+            </div>
+            <div class="modal-body">
+                <div id="dtGridContainerUser" class="dt-grid-container"></div>
+                <div id="dtGridToolBarContainerUser" class="dt-grid-toolbar-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--结束选择模态窗口-->
+
+</@list.html>
+<!-- ================== 开始页面级JavaScrip调用 ================== -->
+<script src="${pluginsRoot}bootstrap-wizard/js/bwizard.js"></script>
+<!-- 表单checkbox项 -->
+<script src="${pluginsRoot}bootstrap-switch/bootstrap-switch.min.js"></script>
+<!-- 日历控件 -->
+<script src="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/WdatePicker.js" defer="defer"></script>
+<script src="${jsRoot}user/riskControl.handle.js"></script>
+<!-- ================== 结束页面级JavaScrip调用 ================== -->
+</@c.html>

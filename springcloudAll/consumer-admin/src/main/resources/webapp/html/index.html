@@ -1,0 +1,113 @@
+<#import "./layout.html" as c>
+<@c.html title="Index">
+    <#if update != "200"><p class="update">${update!}</p></#if>
+  <!-- 开始页面内容 -->
+  <div id="content" class="content">
+      <!-- begin page-header -->
+      <h1 class="page-header">管理首页
+          <small
+          </small></h1>
+      <!-- end page-header -->
+      <div class="row">
+          <#--<!-- begin col-3 &ndash;&gt;
+          <div class="col-md-3 col-sm-6">
+              <div class="widget widget-stats bg-purple">
+                  <div class="stats-icon"><i class="fa fa-shopping-cart"></i></div>
+                  <div class="stats-info">
+                      <h4 style="font-size: 14px; font-weight: bold;">当日交易量</h4>
+                      当日新增交易量(以BTC为单位)
+                      <p>${(txVolume?string("0.00"))!"0.0000"}</p>
+                  </div>
+              </div>
+          </div>
+          <!-- end col-3 &ndash;&gt;
+          <!-- begin col-3 &ndash;&gt;
+          <div class="col-md-3 col-sm-6">
+              <div class="widget widget-stats bg-blue">
+                  <div class="stats-icon"><i class="fa fa-calendar"></i></div>
+                  <div class="stats-info">
+                      <h4 style="font-size: 14px; font-weight: bold;">交易额</h4>
+                      当日新增交易额(以CNY为单位)
+                      <p> ~ ${(txAmount?string("0.00"))!"0.0000"}</p>
+                  </div>
+              </div>
+          </div>-->
+          <!-- end col-3 -->
+          <!-- begin col-3 -->
+          <div class="col-md-3 col-sm-6">
+              <div class="widget widget-stats bg-blue">
+                  <div class="stats-icon"><i class="fa fa-list"></i></div>
+                  <div class="stats-info">
+                      <h4 style="font-size: 14px; font-weight: bold;">买入成交笔数</h4>
+                      当日新增买入交易笔数
+                      <p>${(txBuyInCount)!"0"}</p>
+                  </div>
+              </div>
+          </div>
+          <!-- begin col-3 -->
+          <div class="col-md-3 col-sm-6">
+              <div class="widget widget-stats bg-ppurple">
+                  <div class="stats-icon"><i class="fa fa-list"></i></div>
+                  <div class="stats-info">
+                      <h4 style="font-size: 14px; font-weight: bold;">卖出成交笔数</h4>
+                      当日新增卖出交易笔数
+                      <p>${(txSellOutCount)!"0"}</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="row">
+          <!-- end col-3 -->
+          <!-- begin col-3 -->
+          <div class="col-md-3 col-sm-6">
+              <div class="widget widget-stats bg-aqua">
+                  <div class="stats-icon"><i class="fa fa-user-plus"></i></div>
+                  <div class="stats-info">
+                      <h4 style="font-size: 14px; font-weight: bold;">新增用户</h4>
+                      当日新开户用户数量
+                      <p>${(newAddUserCount)!"0"}</p>
+                  </div>
+              </div>
+          </div>
+          <!-- end col-3 -->
+          <!-- begin col-3 -->
+          <div class="col-md-3 col-sm-6">
+              <div class="widget widget-stats bg-easygreen">
+                  <div class="stats-icon"><i class="fa fa-user-md"></i></div>
+                  <div class="stats-info">
+                      <h4 style="font-size: 14px; font-weight: bold;">登录用户数</h4>
+                      当日登录用户数
+                      <p>${(loginUserCount)!"0"}</p>
+                  </div>
+              </div>
+          </div>
+          <!-- end col-3 -->
+          <!-- begin col-3 -->
+          <div class="col-md-3 col-sm-6">
+              <div class="widget widget-stats bg-orange">
+                  <div class="stats-icon"><i class="fa fa-user"></i></div>
+                  <div class="stats-info">
+                      <h4 style="font-size: 14px; font-weight: bold;">在线用户</h4>
+                      实时在线用户数量
+                      <p>${(onlineUserCount)!"0"}</p>
+                  </div>
+              </div>
+          </div>
+          <!-- end col-3 -->
+          <!-- begin col-3 -->
+          <div class="col-md-3 col-sm-6">
+              <div class="widget widget-stats bg-red">
+                  <div class="stats-icon"><i class="fa fa-users"></i></div>
+                  <div class="stats-info">
+                      <h4 style="font-size: 14px; font-weight: bold;">总用户</h4>
+                      历史所有开户用户数量
+                      <p>${(totalUserCount)!"0"}</p>
+                  </div>
+              </div>
+          </div>
+          <!-- end col-3 -->
+      </div>
+  </div>
+</@c.html>
+<#--<script src="${publicRoot}plugins/echarts/echarts.js"></script>-->
+<script src="${jsRoot}index.js"></script>

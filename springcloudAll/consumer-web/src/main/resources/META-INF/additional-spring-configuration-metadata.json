@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "txSyncSubDelegateCcron",
+      "type": "java.lang.String",
+      "description": "Description for txSyncSubDelegateCcron."
+    },
+    {
+      "name": "access.control.allow.origin",
+      "type": "java.lang.String",
+      "description": "Description for access.control.allow.origin."
+    }
+  ] }

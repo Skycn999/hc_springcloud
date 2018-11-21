@@ -1,0 +1,78 @@
+server:
+  port: 8721
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+eureka:
+  client:
+    service-url:
+#      default-zone: http://admin:admin@116.62.127.60:8761/eureka/
+      default-zone: http://admin:admin@localhost:8761/eureka/
+#      defaultZone: http://admin:admin@13.211.205.147:8761/eureka/
+      eureka-server-connect-timeout-seconds: 30
+      eureka-server-read-timeout-seconds: 30
+spring:
+  application:
+    name: provider-user-fangyong-test
+  #################### DataSource Start ####################
+  datasource:
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+    #url: jdbc:mysql://116.62.127.60:3306/oxchains_dev?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    url: jdbc:mysql://localhost:3306/oxchains_dev?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    dbcp2:
+    # 连接池中的最大空闲连接
+      max-idle: 8
+    # 连接池中的最小空闲连接
+      min-idle: 1
+      initial-size: 5
+      max-total: 20
+      max-wait-millis: 60000
+  #################### DataSource End ####################
+  rabbitmq:
+      host: localhost
+      port: 5672
+      username: guest
+      password: guest
+      smsExchange: smsExchange-dev
+      smsQueue: sys_sms_message-dev
+      emailQueue: sys_email_message-dev
+      insideQueue: sys_inside_message-dev
+      inside2Queue: sys_inside2_message-dev
+  redis:
+    database: 0
+    host: 192.168.2.84
+    port: 6379
+    password:
+    timeout: 20000
+#    cluster: #配置其他的redis服务
+#      nodes: 127.0.0.1:6389,127.0.0.1:6399
+#      max-redirects: 6
+    pool:
+      max-active: 200
+      min-idle: 5
+      max-idle: 20
+      max-wait: 10
+
+
+info:
+  app.name: provider-user
+  company.name: hckj
+  build.artifactId: ${project.artifactId}
+  build.version:  ${project.version}
+
+######################## mapper插件
+mybatis:
+    type-aliases-package: com.mi.hundsun.oxchains.base.core.po
+    configuration:
+      map-underscore-to-camel-case: true # 数据库开启驼峰转换
+mapper:
+    mappers:
+        - com.mi.hundsun.oxchains.base.common.baseMapper.QueryMapper
+        - com.mi.hundsun.oxchains.base.common.baseMapper.InsertMapper
+        - com.mi.hundsun.oxchains.base.common.baseMapper.UpdateMapper
+        - com.mi.hundsun.oxchains.base.common.baseMapper.DeleteMapper
+    not-empty: false
+    identity: MYSQL
+#----------------------- mapper插件 end

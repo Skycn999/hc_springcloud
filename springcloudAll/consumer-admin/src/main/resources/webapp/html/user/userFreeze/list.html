@@ -1,0 +1,124 @@
+<#import "/layout.html" as c>
+    <#import "/list_layout.html" as list>
+        <#assign alertList = []/>
+        <@c.html title="Index">
+        <!-- ================== 开始页面级CSS调用 ================== -->
+        <link href="${pluginsRoot}bootstrap-wizard/css/bwizard.min.css" rel="stylesheet"/>
+        <!-- 日历控件 -->
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/WdatePicker.css" rel="stylesheet"/>
+        <link href="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/skin/default/datepicker.css" rel="stylesheet"/>
+        <!-- ================== 结束页面级CSS调用 ================== -->
+        <@list.html title="用户冻结" subTitle="用户冻结" alertList=alertList permi="sys:freeze:save" addBtn=false searchHint="请输入姓名/手机号码进行搜索">
+
+        <@shiro.hasPermission name="sys:user:freeze:set">
+        <input type="hidden" id="freezeEdit" value="1"/>
+        </@shiro.hasPermission>
+
+        <!-- 开启冻结设置模态窗口 -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title"> 冻结设置页面 <a class="btn btn-info btn-xs m-l-10" role="button" data-toggle="collapse" href="#OperationTipsEdit" aria-expanded="true" title="操作提示"> <i class="fa fa-exclamation"></i> 提示 </a> </h4>
+                </div>
+                <div class="modal-body">
+                    <ul class="text-info p-b-15 p-l-15 collapse in" role="tabpanel" id="OperationTipsEdit">
+                        <li>对用户各种冻结状态进行管理</li>
+                    </ul>
+                    <!--<ul class="text-info p-b-15 p-l-15 collapse in" role="tabpanel" id="OperationTipsEdit">-->
+                    <form id="editForm" class="form-horizontal form-bordered p-0" autocomplete="off" action="${adminRoot}user/freeze/json/set" method="post" data-parsley-validate="true">
+                        <input type="hidden" value="" name="id"/>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">真实姓名&nbsp;:</label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="realname" class="form-control"  autocomplete="off" data-tip="tooltip" data-placement="auto" readonly/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">手机号码&nbsp;:</label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="text" name="mobile" class="form-control"  autocomplete="off" data-tip="tooltip" data-placement="auto" readonly/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">登录状态&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="checkbox" class="loginState" autocomplete="off"
+                                       data-input-name="loginState"
+                                       data-size="small"
+                                       data-on-color="primary"
+                                       data-on-text="正常"
+                                       data-off-text="冻结"
+                                       data-input-true="1"
+                                       data-input-false="0"
+                                       checked/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">提币状态&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="checkbox" class="mentionCoinState" autocomplete="off"
+                                       data-input-name="mentionCoinState"
+                                       data-size="small"
+                                       data-on-color="primary"
+                                       data-on-text="正常"
+                                       data-off-text="冻结"
+                                       data-input-true="1"
+                                       data-input-false="0"
+                                       checked/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">充币状态&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="checkbox" class="rechargeCoinState" autocomplete="off"
+                                       data-input-name="rechargeCoinState"
+                                       data-size="small"
+                                       data-on-color="primary"
+                                       data-on-text="正常"
+                                       data-off-text="冻结"
+                                       data-input-true="1"
+                                       data-input-false="0"
+                                       checked/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">交易状态&nbsp;: </label>
+                            <div class="col-md-9 col-sm-8">
+                                <input type="checkbox" class="tradeState" autocomplete="off"
+                                       data-input-name="tradeState"
+                                       data-size="small"
+                                       data-on-color="primary"
+                                       data-on-text="正常"
+                                       data-off-text="冻结"
+                                       data-input-true="1"
+                                       data-input-false="0"
+                                       checked/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-3">备注&nbsp;:<i class="f-s-14 text-danger">*</i>&nbsp;:</label>
+                            <div class="col-md-9 col-sm-8">
+                                <textarea id="remark" name="remark" class="form-control" rows="5" placeholder="请输入审核备注信息..." autocomplete="off" data-tip="tooltip" data-placement="auto" data-original-title="必填项，输入内容小于500个字。"  maxlength="500" data-parsley-required="true"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer"> <a href="javascript:;" class="btn btn-white" data-dismiss="modal">取消</a> <a href="javascript:;" class="btn btn-primary" data-loading-text="Loading..." nc-ajax-submit-target="editForm" nc-ajax-submit>保存</a> </div>
+            </div>
+        </div>
+    </div>
+        <!-- 结束实名审核模态窗口 -->
+
+
+    </@list.html>
+    <!-- ================== 开始页面级JavaScrip调用 ================== -->
+    <script src="${pluginsRoot}bootstrap-wizard/js/bwizard.js"></script>
+    <!-- 表单checkbox项 -->
+    <script src="${pluginsRoot}bootstrap-switch/bootstrap-switch.min.js"></script>
+    <!-- 日历控件 -->
+    <script src="${pluginsRoot}/jquery.dtGrid/dependents/datePicker/WdatePicker.js" defer="defer"></script>
+    <script src="${jsRoot}user/userFreeze.handle.js"></script>
+    <!-- ================== 结束页面级JavaScrip调用 ================== -->
+</@c.html>
